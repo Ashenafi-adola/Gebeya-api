@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics
 from . models import Account
-from . serializers import AccountSerializer
+from . serializers import AccountSerializer, 
 from rest_framework.permissions import AllowAny
 
 class CreateAccountAPIView(generics.CreateAPIView):
