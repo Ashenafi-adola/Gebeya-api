@@ -4,4 +4,5 @@ from . models import Account
 class AccountSerializer(ModelSerializer):
     class Meta:
         model = Account
-        fields = "__all__"
+        fields = ['username','first_name','last_name', 'avater', 'email', 'password']
+        extra_kwargs = {'password':{'write_only': True}}
