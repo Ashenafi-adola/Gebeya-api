@@ -3,6 +3,9 @@ from . serializers import ProductSerializer, CategorySerializer, ProductAttribut
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 from . models import Product, ProductAttribute, Category
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.reverse import reverse
+from rest_framework import  status
+from rest_framework.response import Response   
 
 class AddCategoryAPIView(generics.CreateAPIView):
     queryset = Category.objects.all()
@@ -21,10 +24,23 @@ class AddProductAPIView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        if serializer.is_valid():
-            serializer.save()
-        else:
-            raise Exception("Exception occured while validating!")
+        serializer.seller = self.request.user
+        instance = serializer.save()
+        self.created_instance = instance
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        redirect_url = reverse(
+            f'add-pro-attr',
+            kwargs={'pk':self.created_instance.id}
+        )
+        return Response(
+            status= status.HTTP_302_FOUND,
+            headers={'Location': redirect_url}
+        )
 
 class AddProductAttributeAPIView(generics.CreateAPIView):
     def get_queryset(self):
@@ -35,3 +51,20 @@ class AddProductAttributeAPIView(generics.CreateAPIView):
     
     serializer_class = ProductAttributeSerializer
     permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer): 
+        instance = serializer.save(product = self.get_object())
+        self.created_instance = instance
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data = request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        redirect_url = reverse(
+            f'add-pro-attr'
+        )
+        return Response(
+            status= status.HTTP_302_FOUND,
+            headers={'Location': redirect_url}
+        )
