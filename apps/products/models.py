@@ -1,5 +1,5 @@
 from django.db import models
-from accounts.models import Account
+from apps.accounts.models import Account
 
 class Category(models.Model):
     name = models.CharField(max_length=40)
@@ -10,10 +10,11 @@ class Category(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=50)
-    price = models.DecimalField(decimal_places=2)
+    price = models.DecimalField(decimal_places=2, max_digits=10)
+    image = models.ImageField(upload_to='product/images/')
     description = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='product/images/')
+    seller = models.ForeignKey(Account, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
