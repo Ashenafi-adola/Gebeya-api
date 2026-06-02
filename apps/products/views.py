@@ -69,3 +69,13 @@ class AddProductAttributeAPIView(generics.CreateAPIView):
             status= status.HTTP_302_FOUND,
             headers={'Location': redirect_url}
         )
+    
+class CategoryListAPIView(generics.ListAPIView):
+    queryset = Category.objects.all()
+    permission_classes = [AllowAny]
+    serializer_class = CategorySerializer
+
+class CategoryProductListAPIView(generics.ListAPIView):
+    queryset = Product.objects.all()
+    permission_classes = [AllowAny]
+    serializer_class = ProductSerializer
