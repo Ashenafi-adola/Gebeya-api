@@ -62,7 +62,8 @@ class AddProductAttributeAPIView(generics.CreateAPIView):
         self.perform_create(serializer)
 
         redirect_url = reverse(
-            f'add-pro-attr'
+            f'add-pro-attr',
+            kwargs={'pk': self.get_object().id}
         )
         return Response(
             status= status.HTTP_302_FOUND,
