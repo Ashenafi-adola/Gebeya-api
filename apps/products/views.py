@@ -79,3 +79,8 @@ class CategoryProductListAPIView(generics.ListAPIView):
     queryset = Product.objects.all()
     permission_classes = [AllowAny]
     serializer_class = ProductSerializer
+
+class ProductDetailAPIView(generics.RetrieveAPIView):
+    queryset = Product.objects.all()
+    permission_classes = [AllowAny]
+    serializer_class = ProductSerializer

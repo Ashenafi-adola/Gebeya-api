@@ -11,6 +11,10 @@ class CategorySerializer(ModelSerializer):
         fields = ['name', 'description']
 
 class ProductSerializer(ModelSerializer):
+    name = HyperlinkedIdentityField(
+        view_name='pro-detail',
+        lookup_field='pk'
+    ) 
     class Meta:
         model = Product
         fields = "__all__"
