@@ -7,6 +7,7 @@ class Account(AbstractUser):
 
     def __str__(self):
         return self.username
+    
 
 class OTPVerification(models.Model):
     user = models.ForeignKey(Account, on_delete=models.CASCADE)
@@ -15,7 +16,6 @@ class OTPVerification(models.Model):
     
 class Address(models.Model):
     user = models.OneToOneField(Account, on_delete=models.CASCADE)
-    country = models.CharField(max_length=40)
-    city = models.CharField(max_length=50)
-    street = models.CharField(max_length=10)
+    block_num = models.CharField(max_length=50)
+    dorm_num = models.CharField(max_length=10)
     phone = models.CharField(max_length=10)

@@ -25,7 +25,7 @@ class CreateAccountAPIView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-        
+
         redirect_url = reverse(
             'add-address' 
         )
@@ -40,8 +40,9 @@ class AddAddressAPIView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
+       
         if serializer.is_valid():
-            serializer.user = self.request.user
-            serializer.save()
+            serializer.save(user=self.request.user)
+            print(serializer.data)
         else:
             pass
