@@ -34,6 +34,22 @@ class CreateAccountAPIView(generics.CreateAPIView):
             headers={'Location': redirect_url}
         )
 
+class UpdateAccountAPIView(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = AccountSerializer
+    queryset = Account.objects.all()
+
+    def put(self, request, *args, **kwargs):
+        return super().put(request, *args, **kwargs)
+    
+class UpdateAddressAPIView(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = AddressSerializer
+    queryset = Address.objects.all()
+
+    def put(self, request, *args, **kwargs):
+        return super().put(request, *args, **kwargs)
+
 class AddAddressAPIView(generics.CreateAPIView):
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
