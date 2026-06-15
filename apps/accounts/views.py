@@ -7,6 +7,7 @@ from django.contrib.auth import login, authenticate, logout
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.response import Response
+from . import utilis
 
 class CreateAccountAPIView(generics.CreateAPIView):
     queryset = Account.objects.all()
@@ -24,7 +25,7 @@ class CreateAccountAPIView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-
+        
         redirect_url = reverse(
             'add-address' 
         )
