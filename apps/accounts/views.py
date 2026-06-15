@@ -26,7 +26,7 @@ class CreateAccountAPIView(generics.CreateAPIView):
         self.perform_create(serializer)
 
         redirect_url = reverse(
-            'add-address'
+            'add-address' 
         )
         return Response(
             status=status.HTTP_302_FOUND,
