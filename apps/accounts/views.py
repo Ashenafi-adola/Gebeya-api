@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.response import Response
 from . import utilis
+from apps.wishlist.models import WishList
 
 class CreateAccountAPIView(generics.CreateAPIView):
     queryset = Account.objects.all()
@@ -17,6 +18,7 @@ class CreateAccountAPIView(generics.CreateAPIView):
     def perform_create(self, serializer):
         if serializer.is_valid():
             instance = serializer.save()
+            WishList.objects.create(user=instance)
             self.created_instance = instance
         else:
             pass
