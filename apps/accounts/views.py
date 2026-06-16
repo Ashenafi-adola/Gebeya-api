@@ -44,6 +44,9 @@ class UpdateAccountAPIView(generics.UpdateAPIView):
     def put(self, request, *args, **kwargs):
         return super().put(request, *args, **kwargs)
     
+    def patch(self, request, *args, **kwargs):
+        return super().patch(request, *args, **kwargs)
+    
 class UpdateAddressAPIView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = AddressSerializer
