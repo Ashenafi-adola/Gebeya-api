@@ -1,20 +1,13 @@
 from rest_framework.serializers import ModelSerializer, HyperlinkedIdentityField
 from . models import Category, Product, ProductAttribute, ProductImage
+from rest_framework import serializers
 
 class CategorySerializer(ModelSerializer):
-    name = HyperlinkedIdentityField(
-        view_name='cate-products',
-        lookup_field='pk'
-    )
     class Meta:
         model = Category
         fields = ['name', 'description']
 
 class ProductSerializer(ModelSerializer):
-    name = HyperlinkedIdentityField(
-        view_name='pro-detail',
-        lookup_field='pk'
-    ) 
     class Meta:
         model = Product
         fields = "__all__"
