@@ -38,7 +38,7 @@ class RetriveUpdateDestroyCategoryAPIView(generics.RetrieveUpdateDestroyAPIView)
 class AddProductAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def perform_create(self, serializer):
         serializer.seller = self.request.user

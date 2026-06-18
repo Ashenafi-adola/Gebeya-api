@@ -9,8 +9,14 @@ class Category(models.Model):
         return self.name
 
 class Product(models.Model):
+    conditions = [
+        ("N", "New"),
+        ("U", "Used"),
+        ("LN", "Like New")
+    ]
     name = models.CharField(max_length=50)
     price = models.DecimalField(decimal_places=2, max_digits=10)
+    condition = models.CharField(max_length=50, choices=conditions)
     description = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     seller = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
