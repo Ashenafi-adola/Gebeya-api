@@ -31,3 +31,6 @@ class ProductAttribute(models.Model):
     def __str__(self):
         return f'{self.attribute} = {self.value}'
     
+class Favorities(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    product = models.ManyToManyField(Product, related_name='products')
