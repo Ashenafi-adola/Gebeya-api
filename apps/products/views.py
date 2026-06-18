@@ -18,7 +18,7 @@ class AddCategoryAPIView(generics.CreateAPIView):
         else:
             raise Exception("Exception occured while validating!")
 
-class RetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+class RetriveUpdateDestroyCategoryAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CategorySerializer
     permission_classes = [IsAdminUser]
     queryset = Category.objects.all()

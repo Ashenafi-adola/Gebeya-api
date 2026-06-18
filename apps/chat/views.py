@@ -4,7 +4,7 @@ from . serializers import MessageSerializer
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
-from apps.accounts.models import Account
+from apps.accounts.models import User
 
 
 class MessageListAPIView(generics.ListAPIView):
@@ -22,4 +22,4 @@ class MessageListAPIView(generics.ListAPIView):
         )
     
     def get_reciever(self):
-        Account.objects.get(id=self.kwargs['pk'])
+        User.objects.get(id=self.kwargs['pk'])

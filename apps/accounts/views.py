@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from rest_framework import generics
-from . models import Account, Address
-from . serializers import AccountSerializer, AddressSerializer
+from . models import User, Address
+from . serializers import UserSerializer, AddressSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth import login, authenticate, logout
 from rest_framework import status
@@ -10,9 +10,9 @@ from rest_framework.response import Response
 from . import utilis
 from apps.wishlist.models import WishList
 
-class CreateAccountAPIView(generics.CreateAPIView):
-    queryset = Account.objects.all()
-    serializer_class = AccountSerializer
+class CreateUserAPIView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
     def perform_create(self, serializer):
@@ -36,10 +36,10 @@ class CreateAccountAPIView(generics.CreateAPIView):
             headers={'Location': redirect_url}
         )
 
-class UpdateAccountAPIView(generics.UpdateAPIView):
+class UpdateUserAPIView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = AccountSerializer
-    queryset = Account.objects.all()
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
 
     def put(self, request, *args, **kwargs):
         return super().put(request, *args, **kwargs)

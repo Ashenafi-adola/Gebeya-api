@@ -2,7 +2,7 @@ from rest_framework import generics
 from rest_framework import views, viewsets
 from . models import WishList
 from apps.products.models import Product
-from apps.accounts.models import Account
+from apps.accounts.models import User
 from rest_framework.permissions import IsAuthenticated
 from . serializers import WishListSerializer
 

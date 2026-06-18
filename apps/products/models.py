@@ -1,5 +1,5 @@
 from django.db import models
-from apps.accounts.models import Account
+from apps.accounts.models import User
 
 class Category(models.Model):
     name = models.CharField(max_length=40)
@@ -11,10 +11,9 @@ class Category(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=50)
     price = models.DecimalField(decimal_places=2, max_digits=10)
-    image = models.ImageField(upload_to='product/images/')
     description = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    seller = models.ForeignKey(Account, on_delete=models.CASCADE, default=1)
+    seller = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     posted_date = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self): 
@@ -31,3 +30,4 @@ class ProductAttribute(models.Model):
 
     def __str__(self):
         return f'{self.attribute} = {self.value}'
+    
