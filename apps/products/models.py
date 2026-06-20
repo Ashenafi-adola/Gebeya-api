@@ -17,7 +17,7 @@ class Product(models.Model):
     name = models.CharField(max_length=50)
     price = models.DecimalField(decimal_places=2, max_digits=10)
     image = models.ImageField(upload_to='products/images', null=True, blank=True)
-    condition = models.CharField(max_length=50, choices=conditions)
+    condition = models.CharField(max_length=50, choices=conditions, default='New')
     views = models.ManyToManyField(User, related_name='views')
     description = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE)

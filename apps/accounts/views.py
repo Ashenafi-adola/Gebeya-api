@@ -21,6 +21,9 @@ class CreateUserAPIView(generics.CreateAPIView):
             instance = serializer.save()
             WishList.objects.create(user=instance)
             self.created_instance = instance
+            return Response(
+                serializer.data
+            )
         else:
             pass
     
@@ -30,7 +33,7 @@ class CreateUserAPIView(generics.CreateAPIView):
         self.perform_create(serializer)
 
         return Response(
-            status=status.HTTP_302_FOUND,
+            serializer.data
         )
 
 class UpdateUserAPIView(generics.UpdateAPIView):

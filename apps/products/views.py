@@ -38,26 +38,31 @@ class RetriveUpdateDestroyCategoryAPIView(generics.RetrieveUpdateDestroyAPIView)
 class AddProductAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+
+    def get_category(self):
+        cat = self.request.data.get('category')
+        try:
+            return Category.objects.get(name=cat)
+        except Exception:
+            return None
 
     def perform_create(self, serializer):
-        serializer.seller = self.request.user
-        instance = serializer.save()
+        instance = serializer.save(seller=self.request.user)
         self.created_instance = instance
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        data = request.data.copy()
+        category = self.get_category()
+        if category is None:
+            return Response({'category': 'This field is required.'}, status=status.HTTP_400_BAD_REQUEST)
+        data['category'] = category.id
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
-        redirect_url = reverse(
-            f'add-pro-attr',
-            kwargs={'pk':self.created_instance.id}
-        )
-        return Response(
-            status= status.HTTP_302_FOUND,
-            headers={'Location': redirect_url}
-        )
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 class AddProductImage(generics.CreateAPIView):
     queryset = ProductImage.objects.all()

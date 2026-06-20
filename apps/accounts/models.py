@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, UserManager, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, UserManager, BaseUserManager, PermissionsMixin
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -35,16 +35,24 @@ class CustomUserManager(BaseUserManager):
             **extra_fields
         )
 
-class User(AbstractUser):
+class User(AbstractBaseUser, PermissionsMixin):
     is_verified = models.BooleanField(default=False)
+    first_name = models.CharField(max_length=150, blank=True)
+    last_name = models.CharField(max_length=150, blank=True)
     email = models.EmailField(unique=True)
+    is_staff = models.BooleanField(
+        default=False,
+    )
+    is_active = models.BooleanField(
+        default=True,
+    )
 
     objects = CustomUserManager()
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name']
+    REQUIRED_FIELDS = []
 
     def __str__(self):
-        return self.username
+        return self.email
     
 
 class OTPVerification(models.Model):
