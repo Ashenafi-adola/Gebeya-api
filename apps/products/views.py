@@ -1,7 +1,7 @@
 from rest_framework import generics
-from . serializers import ProductSerializer, CategorySerializer, ProductAttributeSerializer
+from . serializers import ProductSerializer, CategorySerializer, ProductAttributeSerializer, ProductImageSerializer
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
-from . models import Product, ProductAttribute, Category
+from . models import Product, ProductAttribute, Category, ProductImage
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.reverse import reverse
 from rest_framework import  status
@@ -59,19 +59,22 @@ class AddProductAPIView(generics.ListCreateAPIView):
             headers={'Location': redirect_url}
         )
 
-class RetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = ProductSerializer
+class AddProductImage(generics.CreateAPIView):
+    queryset = ProductImage.objects.all()
+    serializer_class = ProductImageSerializer
     permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+
+class RetriveUpdateDestroyProductAPIView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = [AllowAny]
     queryset = Product.objects.all()
 
-    def put(self, request, *args, **kwargs):
-        return super().put(request, *args, **kwargs)
-    
-    def patch(self, request, *args, **kwargs):
-        return super().patch(request, *args, **kwargs)
-    
-    def delete(self, request, *args, **kwargs):
-        return super().delete(request, *args, **kwargs)
+    def get(self, request, *args, **kwargs):
+        
+        return super().get(request, *args, **kwargs)
 
 class AddProductAttributeAPIView(generics.CreateAPIView):
     def get_queryset(self):

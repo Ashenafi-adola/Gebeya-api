@@ -28,12 +28,8 @@ class CreateUserAPIView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
-        redirect_url = reverse(
-            'add-address' 
-        )
         return Response(
             status=status.HTTP_302_FOUND,
-            headers={'Location': redirect_url}
         )
 
 class UpdateUserAPIView(generics.UpdateAPIView):

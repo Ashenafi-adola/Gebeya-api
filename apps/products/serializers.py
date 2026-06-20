@@ -18,6 +18,10 @@ class ProductImageSerializer(ModelSerializer):
         model = ProductImage
         fields = '__all__'
         extra_kwargs = {'product':{'read_only'}}
+    
+    def create(self, validated_data):
+        image = ProductImage.objects.create(**validated_data)
+        return image
 
 class ProductAttributeSerializer(ModelSerializer):
     class Meta:

@@ -10,12 +10,13 @@ class Category(models.Model):
 
 class Product(models.Model):
     conditions = [
-        ("N", "New"),
-        ("U", "Used"),
-        ("LN", "Like New")
+        ("New", "New"),
+        ("Used", "Used"),
+        ("Like New", "Like New")
     ]
     name = models.CharField(max_length=50)
     price = models.DecimalField(decimal_places=2, max_digits=10)
+    image = models.ImageField(upload_to='products/images', null=True, blank=True)
     condition = models.CharField(max_length=50, choices=conditions)
     description = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
