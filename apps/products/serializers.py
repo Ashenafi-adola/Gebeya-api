@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer, HyperlinkedIdentityField
-from . models import Category, Product, ProductAttribute, ProductImage
+from . models import Category, Product, ProductAttribute, ProductImage, Favorities
 from rest_framework import serializers
 
 class CategorySerializer(ModelSerializer):
@@ -10,7 +10,7 @@ class CategorySerializer(ModelSerializer):
 class ProductSerializer(ModelSerializer):
     class Meta:
         model = Product
-        fields = ['name', 'price', 'image', 'condition', 'description', 'category']
+        fields = ['id', 'name', 'price', 'image', 'condition', 'description', 'category']
         extra_kwargs = {'seller':{'read_only': True}}
 
 class ProductImageSerializer(ModelSerializer):
@@ -27,3 +27,9 @@ class ProductAttributeSerializer(ModelSerializer):
     class Meta:
         model = ProductAttribute
         fields = ['attribute', 'value', 'product']
+
+class FavoritiesSerializer(ModelSerializer):
+    class Meta:
+        model = Favorities
+        fields = ['user', 'product']
+        extra_kwargs = {'user':{'read_only':True}, 'product':{'read_only':True}}

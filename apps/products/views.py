@@ -1,7 +1,7 @@
-from rest_framework import generics
-from . serializers import ProductSerializer, CategorySerializer, ProductAttributeSerializer, ProductImageSerializer
+from rest_framework import generics, views, viewsets
+from . serializers import ProductSerializer, CategorySerializer, ProductAttributeSerializer, ProductImageSerializer, FavoritiesSerializer
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
-from . models import Product, ProductAttribute, Category, ProductImage
+from . models import Product, ProductAttribute, Category, ProductImage, Favorities
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.reverse import reverse
 from rest_framework import  status
@@ -34,8 +34,17 @@ class RetriveUpdateDestroyCategoryAPIView(generics.RetrieveUpdateDestroyAPIView)
     
     def delete(self, request, *args, **kwargs):
         return super().delete(request, *args, **kwargs)
+    
+class GetAllProductsAPIView(generics.ListAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        print(self.request.user)
+        return super().get(request, *args, **kwargs)
         
-class AddProductAPIView(generics.ListCreateAPIView):
+class AddProductAPIView(generics.CreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated]
@@ -57,10 +66,10 @@ class AddProductAPIView(generics.ListCreateAPIView):
         if category is None:
             return Response({'category': 'This field is required.'}, status=status.HTTP_400_BAD_REQUEST)
         data['category'] = category.id
+        print(data)
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
@@ -123,3 +132,39 @@ class ProductDetailAPIView(generics.RetrieveAPIView):
     queryset = Product.objects.all()
     permission_classes = [AllowAny]
     serializer_class = ProductSerializer
+
+class GetFavorities(generics.RetrieveAPIView):
+    queryset = Favorities.objects.all()
+    serializer_class = FavoritiesSerializer
+    permission_classes = [IsAuthenticated]
+
+    def user_fav(self):
+        try:
+            return Favorities.objects.get(user=self.request.user)
+        except Favorities.DoesNotExist:
+            return None
+    def get(self, request, *args, **kwargs):
+        if self.user_fav() == None:
+            return Response("Not loged  in")
+        serializer = FavoritiesSerializer(self.user_fav())
+        return Response(
+            serializer.data
+        )
+
+    def post(self, request, *args, **kwargs):
+        pro_id = self.kwargs['pk']
+        fav_pros = self.user_fav().product
+        pro = Product.objects.get(id=pro_id)
+        if self.user_fav() == None:
+            return Response("No NO oops")
+        
+        if pro in fav_pros.all():
+            fav_pros.remove(pro)
+        else:
+            fav_pros.add(pro)
+
+        serializer = FavoritiesSerializer(self.user_fav())
+        return Response(
+            serializer.data
+        )
+        

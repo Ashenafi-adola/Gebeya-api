@@ -9,7 +9,7 @@ from rest_framework.reverse import reverse
 from rest_framework.response import Response
 from . import utilis
 from apps.wishlist.models import WishList
-from apps.products.models import Product
+from apps.products.models import Product, Favorities
 
 class CreateUserAPIView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -20,6 +20,7 @@ class CreateUserAPIView(generics.CreateAPIView):
         if serializer.is_valid():
             instance = serializer.save()
             WishList.objects.create(user=instance)
+            Favorities.objects.create(user=instance)
             self.created_instance = instance
             return Response(
                 serializer.data
