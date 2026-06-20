@@ -9,6 +9,7 @@ from rest_framework.reverse import reverse
 from rest_framework.response import Response
 from . import utilis
 from apps.wishlist.models import WishList
+from apps.products.models import Product
 
 class CreateUserAPIView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -42,6 +43,20 @@ class UpdateUserAPIView(generics.UpdateAPIView):
     
     def patch(self, request, *args, **kwargs):
         return super().patch(request, *args, **kwargs)
+
+class GetUserAPIView(generics.RetrieveAPIView):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+
+    def get_object(self):
+        return Product.objects.get(id=self.kwargs['pk'])
+
+    def get(self, request, *args, **kwargs):
+        user = self.get_object().seller
+        serializer = UserSerializer(user)
+        return Response(
+            serializer.data,
+        )
     
 class UpdateAddressAPIView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
