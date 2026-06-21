@@ -12,5 +12,6 @@ urlpatterns = [
     path('cate-products/<int:pk>/', views.CategoryProductListAPIView.as_view(), name='cate-products'),
     path('pro-detail/<int:pk>/', views.ProductDetailAPIView.as_view(), name='pro-detail'),
     path('pro-fav/<int:pk>/', views.GetFavorities.as_view()),
-    path('my-pros/', views.GetMyProductsAPIView.as_view())
+    path('my-pros/', views.GetMyProductsAPIView.as_view()),
+    path('my-fav-products/', views.GetMyFavoriteProductsAPIView.as_view())
 ]

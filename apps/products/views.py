@@ -6,6 +6,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.reverse import reverse
 from rest_framework import  status
 from rest_framework.response import Response   
+from django.contrib.auth.models import AnonymousUser
 
 class AddCategoryAPIView(generics.CreateAPIView):
     queryset = Category.objects.all()
@@ -23,26 +24,11 @@ class RetriveUpdateDestroyCategoryAPIView(generics.RetrieveUpdateDestroyAPIView)
     permission_classes = [IsAdminUser]
     queryset = Category.objects.all()
 
-    def patch(self, request, *args, **kwargs):
-        return super().patch(request, *args, **kwargs)
-    
-    def put(self, request, *args, **kwargs):
-        return super().put(request, *args, **kwargs)
-    
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
-    
-    def delete(self, request, *args, **kwargs):
-        return super().delete(request, *args, **kwargs)
     
 class GetAllProductsAPIView(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [AllowAny]
-
-    def get(self, request, *args, **kwargs):
-        print(self.request.user)
-        return super().get(request, *args, **kwargs)
     
         
 class AddProductAPIView(generics.CreateAPIView):
@@ -50,8 +36,7 @@ class AddProductAPIView(generics.CreateAPIView):
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated]
 
-    def get_category(self):
-        cat = self.request.data.get('category')
+    def get_category(self, cat):
         try:
             return Category.objects.get(name=cat)
         except Exception:
@@ -60,22 +45,20 @@ class AddProductAPIView(generics.CreateAPIView):
     def perform_create(self, serializer):
         instance = serializer.save(seller=self.request.user)
         self.created_instance = instance
-        '''
-        views = instance.views
-        views.add(self.request.user)'''
+        views = instance.views.all()
+        views.add(self.request.user)
 
-    def create(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         data = request.data.copy()
-        category = self.get_category()
-        if category is None:
-            return Response({'category': 'This field is required.'}, status=status.HTTP_400_BAD_REQUEST)
-        data['category'] = category.id
-        print(data)
+        cate = self.get_category(data['category'])
+        data['category'] = cate.id
         serializer = ProductSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            serializer.data
+        )
+
 
 class AddProductImage(generics.CreateAPIView):
     queryset = ProductImage.objects.all()
@@ -95,7 +78,7 @@ class RetriveUpdateDestroyProductAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     def get(self, request, *args, **kwargs):
         views = self.get_product().views.all()
-        if self.request.user:
+        if self.request.user.id is not None:
             if self.request.user not in views:
                 self.get_product().views.add(self.request.user)
         print(views)
@@ -107,6 +90,15 @@ class GetMyProductsAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         return Product.objects.filter(seller= self.request.user)
+    
+class GetMyFavoriteProductsAPIView(generics.ListAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        fav = Favorities.objects.get(user= self.request.user)
+        fav_products = fav.product.all()
+        return fav_products
 
 class AddProductAttributeAPIView(generics.CreateAPIView):
     def get_queryset(self):

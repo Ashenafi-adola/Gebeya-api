@@ -51,6 +51,7 @@ class UpdateUserAPIView(generics.UpdateAPIView):
 class GetProductSellerAPIView(generics.RetrieveAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
+    permission_classes = [AllowAny]
 
     def get_object(self):
         return Product.objects.get(id=self.kwargs['pk'])
