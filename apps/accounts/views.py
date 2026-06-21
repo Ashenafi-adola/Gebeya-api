@@ -48,7 +48,7 @@ class UpdateUserAPIView(generics.UpdateAPIView):
     def patch(self, request, *args, **kwargs):
         return super().patch(request, *args, **kwargs)
 
-class GetUserAPIView(generics.RetrieveAPIView):
+class GetProductSellerAPIView(generics.RetrieveAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
@@ -61,6 +61,16 @@ class GetUserAPIView(generics.RetrieveAPIView):
         return Response(
             serializer.data,
         )
+
+class GetUserAPIView(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = self.request.user
+        serailizer = UserSerializer(user)
+        return Response(serailizer.data)
     
 class UpdateAddressAPIView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
