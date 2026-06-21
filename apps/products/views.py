@@ -43,6 +43,7 @@ class GetAllProductsAPIView(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         print(self.request.user)
         return super().get(request, *args, **kwargs)
+    
         
 class AddProductAPIView(generics.CreateAPIView):
     queryset = Product.objects.all()
@@ -59,6 +60,9 @@ class AddProductAPIView(generics.CreateAPIView):
     def perform_create(self, serializer):
         instance = serializer.save(seller=self.request.user)
         self.created_instance = instance
+        '''
+        views = instance.views
+        views.add(self.request.user)'''
 
     def create(self, request, *args, **kwargs):
         data = request.data.copy()
@@ -67,7 +71,7 @@ class AddProductAPIView(generics.CreateAPIView):
             return Response({'category': 'This field is required.'}, status=status.HTTP_400_BAD_REQUEST)
         data['category'] = category.id
         print(data)
-        serializer = self.get_serializer(data=data)
+        serializer = ProductSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
@@ -86,9 +90,23 @@ class RetriveUpdateDestroyProductAPIView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [AllowAny]
     queryset = Product.objects.all()
 
+    def get_product(self):
+        return Product.objects.get(id=self.kwargs['pk'])
+
     def get(self, request, *args, **kwargs):
-        
+        views = self.get_product().views.all()
+        if self.request.user:
+            if self.request.user not in views:
+                self.get_product().views.add(self.request.user)
+        print(views)
         return super().get(request, *args, **kwargs)
+    
+class GetMyProductsAPIView(generics.ListAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Product.objects.filter(seller= self.request.user)
 
 class AddProductAttributeAPIView(generics.CreateAPIView):
     def get_queryset(self):

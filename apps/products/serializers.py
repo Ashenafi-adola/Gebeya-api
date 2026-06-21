@@ -10,7 +10,7 @@ class CategorySerializer(ModelSerializer):
 class ProductSerializer(ModelSerializer):
     class Meta:
         model = Product
-        fields = ['id', 'name', 'price', 'image', 'condition', 'description', 'category']
+        fields = ['id', 'name', 'price', 'image', 'condition', 'description', 'category', 'views']
         extra_kwargs = {'seller':{'read_only': True}}
 
 class ProductImageSerializer(ModelSerializer):
