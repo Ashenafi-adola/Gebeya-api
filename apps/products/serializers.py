@@ -8,10 +8,16 @@ class CategorySerializer(ModelSerializer):
         fields = ['name', 'description']
 
 class ProductSerializer(ModelSerializer):
+    category = serializers.StringRelatedField()
+    no_views = serializers.SerializerMethodField()
     class Meta:
         model = Product
-        fields = ['id', 'name', 'price', 'image', 'condition', 'description', 'category', 'views','posted_date']
+        fields = ['id', 'name', 'price', 'image', 'condition', 'description','no_views', 'category', 'views','posted_date']
         extra_kwargs = {'seller':{'read_only': True}, 'views':{'read_only':True}}
+
+    def get_no_views(self, obj):
+        number = obj.views.all().count()
+        return number
 
 class ProductImageSerializer(ModelSerializer):
     class Meta:

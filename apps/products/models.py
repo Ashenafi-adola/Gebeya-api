@@ -24,6 +24,8 @@ class Product(models.Model):
     seller = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     posted_date = models.DateTimeField(auto_now_add=True, null=True)
 
+    class Meta:
+        ordering = ['-posted_date']
     def __str__(self): 
         return self.name
     

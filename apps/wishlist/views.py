@@ -21,4 +21,4 @@ class AddProductToWishListAPIView(generics.UpdateAPIView):
         if product not in wishlistProducts:
             wishlistProducts.add(product)
         else:
-            wishlistProducts.remove(product)
+            wishlistProducts.remove(product) 

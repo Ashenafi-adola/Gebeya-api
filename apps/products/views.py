@@ -6,7 +6,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.reverse import reverse
 from rest_framework import  status
 from rest_framework.response import Response   
-from django.contrib.auth.models import AnonymousUser
+from rest_framework.views import APIView
 
 class AddCategoryAPIView(generics.CreateAPIView):
     queryset = Category.objects.all()
@@ -43,15 +43,14 @@ class AddProductAPIView(generics.CreateAPIView):
             return None
 
     def perform_create(self, serializer):
-        instance = serializer.save(seller=self.request.user)
+        instance = serializer.save(seller=self.request.user,category=self.get_category(self.request.data['category']))
         self.created_instance = instance
-        views = instance.views.all()
-        views.add(self.request.user)
 
     def post(self, request, *args, **kwargs):
         data = request.data.copy()
         cate = self.get_category(data['category'])
         data['category'] = cate.id
+        print(data)
         serializer = ProductSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -81,9 +80,8 @@ class RetriveUpdateDestroyProductAPIView(generics.RetrieveUpdateDestroyAPIView):
         if self.request.user.id is not None:
             if self.request.user not in views:
                 self.get_product().views.add(self.request.user)
-        print(views)
         return super().get(request, *args, **kwargs)
-    
+
 class GetMyProductsAPIView(generics.ListAPIView):
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated]
@@ -100,33 +98,22 @@ class GetMyFavoriteProductsAPIView(generics.ListAPIView):
         fav_products = fav.product.all()
         return fav_products
 
-class AddProductAttributeAPIView(generics.CreateAPIView):
-    def get_queryset(self):
-        ProductAttribute.objects.filter(product=self.get_object())
-    
-    def get_object(self):
-        return Product.objects.get(id=self.kwargs['pk'])
-    
-    serializer_class = ProductAttributeSerializer
+class GetMyTotalAPIView(generics.RetrieveAPIView):
+    serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated]
 
-    def perform_create(self, serializer): 
-        instance = serializer.save(product = self.get_object())
-        self.created_instance = instance
+    def get_queryset(self):
+        return Product.objects.filter(seller=self.request.user)
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data = request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+    def get(self, request, *args, **kwargs):
+        total_views = 0
+        for i in self.get_queryset():
+            total_views += i.views.all().count()
 
-        redirect_url = reverse(
-            f'add-pro-attr',
-            kwargs={'pk': self.get_object().id}
-        )
-        return Response(
-            status= status.HTTP_302_FOUND,
-            headers={'Location': redirect_url}
-        )
+        res = {
+            'total_views':total_views
+        }
+        return Response(res)
     
 class CategoryListAPIView(generics.ListAPIView):
     queryset = Category.objects.all()
