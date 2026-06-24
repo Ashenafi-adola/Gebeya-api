@@ -7,7 +7,7 @@ from django.db.models import Q
 from apps.accounts.models import User
 
 
-class MessageListAPIView(generics.ListAPIView):
+class MessageListAPIView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = MessageSerializer
     
@@ -22,4 +22,8 @@ class MessageListAPIView(generics.ListAPIView):
         )
     
     def get_reciever(self):
-        User.objects.get(id=self.kwargs['pk'])
+        return User.objects.get(id=self.kwargs['pk'])
+
+    def perform_create(self, serializer):
+        if serializer.is_valid():
+            serializer.save(sender=self.request.user, reciever=self.get_reciever())

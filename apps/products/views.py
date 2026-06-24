@@ -81,6 +81,8 @@ class RetriveUpdateDestroyProductAPIView(generics.RetrieveUpdateDestroyAPIView):
             if self.request.user not in views:
                 self.get_product().views.add(self.request.user)
         return super().get(request, *args, **kwargs)
+    def delete(self, request, *args, **kwargs):
+        return super().delete(request, *args, **kwargs)
 
 class GetMyProductsAPIView(generics.ListAPIView):
     serializer_class = ProductSerializer

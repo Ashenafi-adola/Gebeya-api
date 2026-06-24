@@ -62,7 +62,12 @@ class GetProductSellerAPIView(generics.RetrieveAPIView):
         return Response(
             serializer.data,
         )
+class GetAllUsersAPIView(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
 
+    
 class GetUserAPIView(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -72,6 +77,12 @@ class GetUserAPIView(generics.RetrieveAPIView):
         user = self.request.user
         serailizer = UserSerializer(user)
         return Response(serailizer.data)
+
+class GetUserByIdAPIView(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
     
 class UpdateAddressAPIView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
