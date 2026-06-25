@@ -3,10 +3,13 @@ from channels.db import database_sync_to_async
 from . models import Message
 from apps.accounts.models import User
 import json
+from django.utils import timezone
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+        user = self.scope['user']
+        print(self.scope)
         await self.accept()
 
     async def disconnect(self, code):
