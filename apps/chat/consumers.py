@@ -1,7 +1,7 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from . models import Message
-from apps.accounts.models import User
+from apps.accounts.models import User, Contact
 import json
 from django.utils import timezone
 
@@ -61,4 +61,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
         sen = User.objects.get(id=self.scope['user'].id)
         rec = User.objects.get(id=int(self.scope['url_route']['kwargs']['id']))
         mes = Message.objects.create(sender=sen, reciever=rec, message=message)
+        try:
+            con = Contact.objects.create(user=sen)
+            cons = con.contacts
+            cons.add(rec)
+        except Exception:
+            con = Contact.objects.get(user=sen)
+            a = con.contacts
+            cons = con.contacts.all()
+            if rec not in cons:
+                a.add(rec)
+        
         return mes.id
