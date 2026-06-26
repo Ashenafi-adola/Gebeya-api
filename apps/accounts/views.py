@@ -1,13 +1,13 @@
 from django.shortcuts import render, redirect
 from rest_framework import generics
-from . models import User, Address, Contact
+from . models import User, Address, Contact, OTPVerification
 from . serializers import UserSerializer, AddressSerializer, ContactSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth import login, authenticate, logout
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.response import Response
-from . import utilis
+from .utilis import generate_otp, send_email
 from apps.wishlist.models import WishList
 from apps.products.models import Product, Favorities
 
@@ -19,6 +19,9 @@ class CreateUserAPIView(generics.CreateAPIView):
     def perform_create(self, serializer):
         if serializer.is_valid():
             instance = serializer.save()
+            otp_code = generate_otp()
+            user_otp = OTPVerification.objects.create(user=instance, otp=otp_code)
+            send_email(instance.email, otp_code)
             WishList.objects.create(user=instance)
             Favorities.objects.create(user=instance)
             self.created_instance = instance

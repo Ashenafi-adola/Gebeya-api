@@ -8,7 +8,8 @@ def send_email(email, otp):
     send_mail(
         "Email Verification",
         f"Your email verification OTP is {otp}",
-        "example@gmail.com",
+        "ashenafiadola05@gmail.com",
         [email],
         fail_silently=False
     )
+
