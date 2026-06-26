@@ -65,3 +65,8 @@ class Address(models.Model):
     block_num = models.CharField(max_length=50)
     dorm_num = models.CharField(max_length=10)
     phone = models.CharField(max_length=10)
+
+
+class Contact(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    contacts = models.ManyToManyField(User, related_name='contacts')

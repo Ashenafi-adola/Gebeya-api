@@ -9,5 +9,6 @@ urlpatterns = [
     path('get-user/<int:pk>/', views.GetProductSellerAPIView.as_view()),
     path('get-user/', views.GetUserAPIView.as_view()),
     path("get-user-by-id/<int:pk>/", views.GetUserByIdAPIView.as_view()),
-    path('get-all-users/', views.GetAllUsersAPIView.as_view())
+    path('get-all-users/', views.GetAllUsersAPIView.as_view()),
+    path('get-my-contacts/', views.GetMyContacts.as_view())
 ]

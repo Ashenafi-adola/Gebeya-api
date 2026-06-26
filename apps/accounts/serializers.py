@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
-from . models import User, Address
+from . models import User, Address, Contact
 from django.contrib.auth import password_validation
 
 class UserSerializer(ModelSerializer):
@@ -18,3 +18,10 @@ class AddressSerializer(ModelSerializer):
         model = Address
         fields = "__all__"
         extra_kwargs = {'user': {'read_only':True}}
+
+class ContactSerializer(ModelSerializer):
+    contacts = UserSerializer(many=True, read_only=True)
+    class Meta:
+        model = Contact
+        fields = ['id', 'user', 'contacts']
+        extra_kwargs = {'user':{'read_only':True}}

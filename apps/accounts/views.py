@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from rest_framework import generics
-from . models import User, Address
-from . serializers import UserSerializer, AddressSerializer
+from . models import User, Address, Contact
+from . serializers import UserSerializer, AddressSerializer, ContactSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth import login, authenticate, logout
 from rest_framework import status
@@ -83,7 +83,14 @@ class GetUserByIdAPIView(generics.RetrieveAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
-    
+class GetMyContacts(generics.RetrieveAPIView):
+    serializer_class = ContactSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = Contact.objects.all()
+
+    def get_object(self):
+        return Contact.objects.get(user=self.request.user)
+
 class UpdateAddressAPIView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = AddressSerializer
