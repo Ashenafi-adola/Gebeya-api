@@ -4,6 +4,7 @@ from . models import Message
 from apps.accounts.models import User, Contact
 import json
 from django.utils import timezone
+from django.core.mail import send_mail
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -61,6 +62,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
         sen = User.objects.get(id=self.scope['user'].id)
         rec = User.objects.get(id=int(self.scope['url_route']['kwargs']['id']))
         mes = Message.objects.create(sender=sen, reciever=rec, message=message)
+        send_mail(
+            "New chat message recieved!",
+            f"{sen.first_name+" "+ sen.last_name} Sent You: \n{message}",
+            f"{sen.email}",
+            [rec.email],
+            fail_silently=False
+        )
         try:
             con = Contact.objects.create(user=sen)
             cons = con.contacts
