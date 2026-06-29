@@ -60,7 +60,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 class OTPVerification(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     otp = models.CharField(max_length=6)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now=True)
 
     def is_expired(self):
         return (self.created_at + timedelta(minutes=15)) < timezone.now()

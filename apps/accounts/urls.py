@@ -11,5 +11,6 @@ urlpatterns = [
     path("get-user-by-email/<str:email>/", views.GetUserByEmail.as_view()),
     path("get-user-by-id/<int:pk>/", views.GetUserByIdAPIView.as_view()),
     path('get-all-users/', views.GetAllUsersAPIView.as_view()),
-    path('get-my-contacts/', views.GetMyContacts.as_view())
+    path('get-my-contacts/', views.GetMyContacts.as_view()),
+    path('verify-email/<str:email>/', views.VerifyEmailAPIView.as_view())
 ]

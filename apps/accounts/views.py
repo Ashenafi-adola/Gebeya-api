@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
-from rest_framework import generics
+from rest_framework import generics, viewsets
+from rest_framework.views import APIView
 from . models import User, Address, Contact, OTPVerification
 from . serializers import UserSerializer, AddressSerializer, ContactSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -39,6 +40,33 @@ class CreateUserAPIView(generics.CreateAPIView):
         return Response(
             serializer.data
         )
+
+class VerifyEmailAPIView(generics.RetrieveUpdateAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
+    queryset = User
+    lookup_field = 'email'
+
+    def get_object(self):
+        return User.objects.get(email=self.kwargs['email']) 
+
+    def post(self, request, *args, **kwargs):
+        print(request.data)
+        user = User.objects.get(email=self.kwargs['email'])
+        OTP = OTPVerification.objects.get(user=self.get_object())
+        if OTP.is_expired():
+            otp_code = generate_otp()
+            OTP.otp = otp_code
+            OTP.save()
+            send_email(request.data['email'], otp_code)
+            return Response({'message': 'OTP expired'})
+        else:
+            if request.data['otp'] == OTP.otp:
+                user.is_verified = True
+                user.save()
+                return Response({"message": "Successfull verifyed"})
+            else:
+                return Response({"message": "Incorrenct OTP code!"})
 
 class UpdateUserAPIView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
