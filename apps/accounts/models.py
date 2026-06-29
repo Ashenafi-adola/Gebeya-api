@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, UserManager, BaseUserManager, PermissionsMixin
+from django.utils import timezone
+from datetime import timedelta
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -59,6 +61,9 @@ class OTPVerification(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     otp = models.CharField(max_length=6)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def is_expired(self):
+        return (self.created_at + timedelta(minutes=15)) < timezone.now()
     
 class Address(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

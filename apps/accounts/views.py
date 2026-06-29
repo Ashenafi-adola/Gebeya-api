@@ -70,6 +70,17 @@ class GetAllUsersAPIView(generics.ListAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
+class GetUserByEmail(generics.RetrieveAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
+    queryset = User.objects.all()
+
+    def get_object(self):
+        return User.objects.get(email=self.kwargs['email'])
+
+    def get(self, request, *args, **kwargs):
+        user = self.get_object()
+        return Response({'is_verified': user.is_verified })
     
 class GetUserAPIView(generics.RetrieveAPIView):
     queryset = User.objects.all()
