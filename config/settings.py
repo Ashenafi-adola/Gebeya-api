@@ -64,7 +64,6 @@ INSTALLED_APPS = [
     'apps.products',
     'apps.chat',
     'apps.wishlist',
-    'apps.reports',
 
     #external apps
     'rest_framework',

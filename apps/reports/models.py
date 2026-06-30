@@ -1,3 +1,13 @@
 from django.db import models
 
-# Create your models here.
+
+from apps.accounts.models import User
+from apps.products.models import Product
+
+
+class Report(models.Model):
+    reporter = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    product = models.OneToOneField(Product, on_delete=models.DO_NOTHING)
+    reason = models.TextField()
+    report = models.TextField()
+    reported_at = models.DateTimeField(auto_now_add=True)
