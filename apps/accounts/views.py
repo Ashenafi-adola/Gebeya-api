@@ -59,14 +59,14 @@ class VerifyEmailAPIView(generics.RetrieveUpdateAPIView):
             OTP.otp = otp_code
             OTP.save()
             send_email(request.data['email'], otp_code)
-            return Response({'message': 'OTP expired'})
+            return Response({'message': 'OTP expired', 'is_verified': user.is_verified})
         else:
             if request.data['otp'] == OTP.otp:
                 user.is_verified = True
                 user.save()
-                return Response({"message": "Successfull verifyed"})
+                return Response({"message": "Successfull verifyed", 'is_verified': user.is_verified})
             else:
-                return Response({"message": "Incorrenct OTP code!"})
+                return Response({"message": "Incorrenct OTP code!", 'is_verified': user.is_verified})
 
 class UpdateUserAPIView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
@@ -94,10 +94,12 @@ class GetProductSellerAPIView(generics.RetrieveAPIView):
             serializer.data,
         )
 class GetAllUsersAPIView(generics.ListAPIView):
-    queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        return User.objects.all().exclude(id=self.request.user.id)
+    
 class GetUserByEmail(generics.RetrieveAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
@@ -131,7 +133,11 @@ class GetMyContacts(generics.RetrieveAPIView):
     queryset = Contact.objects.all()
 
     def get_object(self):
-        return Contact.objects.get(user=self.request.user)
+        try:
+            return Contact.objects.get(user=self.request.user)
+        except Exception:
+            cont = Contact.objects.create(user=self.request.user)
+            return cont
 
 class UpdateAddressAPIView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]

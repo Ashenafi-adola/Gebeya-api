@@ -58,10 +58,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    #internal apps
     'apps.accounts',
     'apps.products',
     'apps.chat',
     'apps.wishlist',
+    'apps.reports',
+
+    #external apps
     'rest_framework',
     'corsheaders',
     'rest_framework_simplejwt'
