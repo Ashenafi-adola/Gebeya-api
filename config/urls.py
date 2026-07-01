@@ -14,7 +14,7 @@ class PublicTokenRefreshView(TokenRefreshView):
     permission_classes = [AllowAny]
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', include('apps.adminapp.urls')),
     path('accounts/', include('apps.accounts.urls')),
     path('products/', include('apps.products.urls')),
     path('chat/', include('apps.chat.urls')),
