@@ -17,6 +17,7 @@ urlpatterns = [
     path('admin/', include('apps.adminapp.urls')),
     path('accounts/', include('apps.accounts.urls')),
     path('products/', include('apps.products.urls')),
+    path('reports/', include('apps.reports.urls')),
     path('chat/', include('apps.chat.urls')),
     path('wishlist/', include('apps.wishlist.urls')),
     path('api-auth/', include('rest_framework.urls')),
