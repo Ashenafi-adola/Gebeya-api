@@ -14,6 +14,7 @@ class Product(models.Model):
         ("Used", "Used"),
         ("Like New", "Like New")
     ]
+
     name = models.CharField(max_length=50)
     price = models.DecimalField(decimal_places=2, max_digits=10)
     image = models.ImageField(upload_to='products/images', null=True, blank=True)
@@ -23,6 +24,8 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     seller = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     posted_date = models.DateTimeField(auto_now_add=True, null=True)
+    status = models.CharField(max_length=50, default="Pending")
+
 
     class Meta:
         ordering = ['-posted_date']
