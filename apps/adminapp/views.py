@@ -2,7 +2,7 @@ from apps.accounts.models import User
 from apps.accounts.serializers import UserSerializer
 from apps.products.models import Product, Category
 from apps.products.serializers import ProductSerializer, CategorySerializer
-from apps.reports.models import Report
+#from apps.reports.models import Report
 from rest_framework import generics
 from rest_framework.views import View
 from rest_framework.response import Response
