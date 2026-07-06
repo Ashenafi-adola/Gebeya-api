@@ -12,6 +12,7 @@ from .utilis import generate_otp, send_email
 from apps.wishlist.models import WishList
 from apps.products.models import Product, Favorities
 
+
 class CreateUserAPIView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -98,7 +99,7 @@ class GetAllUsersAPIView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return User.objects.all().exclude(id=self.request.user.id)
+        return User.objects.all().exclude(id=self.request.user.id).exclude(is_superuser=True)
     
 class GetUserByEmail(generics.RetrieveAPIView):
     serializer_class = UserSerializer
