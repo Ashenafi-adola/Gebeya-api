@@ -3,6 +3,7 @@ from . models import Report
 
 
 class ReportSerializer(serializers.ModelSerializer):
+    product = serializers.StringRelatedField()
     class Meta:
         model = Report
         fields = ['id', 'reporter', 'product', 'reason', 'severity', 'status']

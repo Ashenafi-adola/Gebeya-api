@@ -26,7 +26,6 @@ class Product(models.Model):
     posted_date = models.DateTimeField(auto_now_add=True, null=True)
     status = models.CharField(max_length=50, default="Pending")
 
-
     class Meta:
         ordering = ['-posted_date']
     def __str__(self): 

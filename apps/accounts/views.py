@@ -99,7 +99,7 @@ class GetAllUsersAPIView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return User.objects.all().exclude(id=self.request.user.id).exclude(is_superuser=True)
+        return User.objects.all().exclude(id=self.request.user.id).exclude(is_superuser=True).exclude(is_verified=False)
     
 class GetUserByEmail(generics.RetrieveAPIView):
     serializer_class = UserSerializer
@@ -108,8 +108,6 @@ class GetUserByEmail(generics.RetrieveAPIView):
 
     def get_object(self):
         return User.objects.get(email=self.kwargs['email'])
-
-
     
 class GetUserAPIView(generics.RetrieveAPIView):
     queryset = User.objects.all()

@@ -13,3 +13,7 @@ class Report(models.Model):
 
     def __str__(self):
         return self.reason
+
+    @classmethod
+    def get_recent_reports(cls):
+        return cls.objects.all()[:4]
