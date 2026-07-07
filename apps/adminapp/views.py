@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
 from datetime import timedelta
 from django.utils import timezone
-
+from rest_framework.views import APIView
 class AdminOverViewAPIView(generics.ListCreateAPIView):
     serializer_class  = UserSerializer
     permission_classes = [IsAdminUser]
@@ -40,3 +40,21 @@ class GetUsersAPIView(generics.ListAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAdminUser]
     queryset = User.objects.all()
+
+class ManageUserAPIView(generics.CreateAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [IsAdminUser]
+    queryset = User.objects.all()
+
+    def get_user(self):
+        return User.objects.get(id=self.kwargs['pk'])
+
+    def post(self, request, *args, **kwargs):
+        user = self.get_user()
+        if request.data['action'] == 'status':
+            user.is_active = request.data['data']
+            user.save()
+        elif request.data['action'] == 'promote':
+            user.is_superuser = request.data['data']
+            user.save()
+        return Response({'status': 'success'})
