@@ -1,6 +1,7 @@
 from rest_framework.serializers import ModelSerializer, HyperlinkedIdentityField
 from . models import Category, Product, ProductAttribute, ProductImage, Favorities
 from rest_framework import serializers
+from apps.accounts.models import User
 
 class CategorySerializer(ModelSerializer):
     class Meta:
@@ -10,14 +11,19 @@ class CategorySerializer(ModelSerializer):
 class ProductSerializer(ModelSerializer):
     category = serializers.StringRelatedField()
     no_views = serializers.SerializerMethodField()
+    seller = serializers.SerializerMethodField()
     class Meta:
         model = Product
-        fields = ['id', 'name', 'price', 'image', 'condition', 'description','no_views', 'category', 'views','posted_date']
-        extra_kwargs = {'seller':{'read_only': True}, 'views':{'read_only':True}}
+        fields = ['id', 'name', 'price', 'image', 'condition', 'description','no_views', 'category', 'views','posted_date','seller','status']
+        extra_kwargs = {'seller':{'read_only': True}, 'views':{'read_only':True},'status':{'read_only':True}}
 
     def get_no_views(self, obj):
         number = obj.views.all().count()
         return number
+    
+    def get_seller(self, obj):
+        user = obj.seller
+        return user.first_name + " " + user.last_name
 
 class ProductImageSerializer(ModelSerializer):
     class Meta:

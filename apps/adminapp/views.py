@@ -5,12 +5,10 @@ from apps.products.serializers import ProductSerializer, CategorySerializer
 from apps.reports.models import Report
 from apps.reports.serializers import ReportSerializer
 from rest_framework import generics
-from rest_framework.views import View
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
-from datetime import timedelta
-from django.utils import timezone
-from rest_framework.views import APIView
+
+
 class AdminOverViewAPIView(generics.ListCreateAPIView):
     serializer_class  = UserSerializer
     permission_classes = [IsAdminUser]
@@ -58,3 +56,26 @@ class ManageUserAPIView(generics.CreateAPIView):
             user.is_superuser = request.data['data']
             user.save()
         return Response({'status': 'success'})
+
+class GetProductsAPIView(generics.ListAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = [IsAdminUser]
+    queryset = Product.objects.all()
+
+class ManageProductAPIView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = [IsAdminUser]
+    queryset = Product.objects.all()
+
+    def get_product(self):
+        return Product.objects.get(id=self.kwargs['pk'])
+
+    def patch(self, request, *args, **kwargs):
+        product = self.get_product()
+        product.status = request.data['status']
+        product.save()
+        return Response(
+            {
+                'status':'success'
+            }
+        )

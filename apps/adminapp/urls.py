@@ -5,5 +5,8 @@ urlpatterns = [
     path('overview/', views.AdminOverViewAPIView.as_view()),
     path('reports/', views.GetReportsAPIView.as_view()),
     path('users/', views.GetUsersAPIView.as_view()),
-    path('manage-user/<int:pk>/', views.ManageUserAPIView.as_view())
+    path('manage-user/<int:pk>/', views.ManageUserAPIView.as_view()),
+    path('products/', views.GetProductsAPIView.as_view()),
+    path('manage-product/<int:pk>/', views.ManageProductAPIView.as_view())
+    
 ]
