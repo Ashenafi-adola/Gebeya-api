@@ -36,3 +36,7 @@ class GetReportsAPIView(generics.ListAPIView):
     queryset = Report.get_recent_reports()
     permission_classes = [IsAdminUser]
 
+class GetUsersAPIView(generics.ListAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [IsAdminUser]
+    queryset = User.objects.all()
