@@ -6,7 +6,7 @@ from apps.accounts.models import User
 class CategorySerializer(ModelSerializer):
     class Meta:
         model = Category
-        fields = ['name', 'description']
+        fields = ['id','icon','name', 'description']
 
 class ProductSerializer(ModelSerializer):
     category = serializers.StringRelatedField()

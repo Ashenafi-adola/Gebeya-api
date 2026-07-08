@@ -7,6 +7,7 @@ from apps.reports.serializers import ReportSerializer
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
+from rest_framework.viewsets import ViewSet, ModelViewSet,ReadOnlyModelViewSet
 
 
 class AdminOverViewAPIView(generics.ListCreateAPIView):
@@ -79,3 +80,9 @@ class ManageProductAPIView(generics.RetrieveUpdateDestroyAPIView):
                 'status':'success'
             }
         )
+
+class CategoryManagementAPIView(ReadOnlyModelViewSet, generics.CreateAPIView):
+    serializer_class = CategorySerializer
+    permission_classes = [IsAdminUser]
+    queryset = Category.objects.all()
+    

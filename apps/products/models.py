@@ -4,6 +4,7 @@ from apps.accounts.models import User
 class Category(models.Model):
     name = models.CharField(max_length=40)
     description = models.TextField()
+    icon = models.CharField(max_length=1,default='📦')
 
     def __str__(self):
         return self.name
