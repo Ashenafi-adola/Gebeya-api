@@ -5,7 +5,7 @@ from apps.products.models import Product
 
 class Report(models.Model):
     reporter = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-    product = models.OneToOneField(Product, on_delete=models.DO_NOTHING)
+    product = models.ForeignKey(Product, on_delete=models.DO_NOTHING)
     reason = models.TextField()
     reported_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=50, default="open")
@@ -16,4 +16,4 @@ class Report(models.Model):
 
     @classmethod
     def get_recent_reports(cls):
-        return cls.objects.all()[:4]
+        return cls.objects.all()
