@@ -85,4 +85,9 @@ class CategoryManagementAPIView(ReadOnlyModelViewSet, generics.CreateAPIView):
     serializer_class = CategorySerializer
     permission_classes = [IsAdminUser]
     queryset = Category.objects.all()
-    
+
+class RetirieveUpdateDestroyCategoryAPIView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAdminUser]
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()
+
