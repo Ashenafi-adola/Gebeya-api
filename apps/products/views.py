@@ -8,16 +8,10 @@ from rest_framework import  status
 from rest_framework.response import Response   
 from rest_framework.views import APIView
 
-class AddCategoryAPIView(generics.CreateAPIView):
-    queryset = Category.objects.all()
+class CategoriesAPIView(generics.ListAPIView):
     serializer_class = CategorySerializer
-    permission_classes = [IsAdminUser]
-
-    def perform_create(self, serializer):
-        if serializer.is_valid():
-            serializer.save()
-        else:
-            raise Exception("Exception occured while validating!")
+    permission_classes = [IsAuthenticated]
+    queryset = Category.objects.all()
 
 class RetriveUpdateDestroyCategoryAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CategorySerializer
@@ -26,7 +20,7 @@ class RetriveUpdateDestroyCategoryAPIView(generics.RetrieveUpdateDestroyAPIView)
 
     
 class GetAllProductsAPIView(generics.ListAPIView):
-    queryset = Product.objects.all()
+    queryset = Product.objects.filter(status='Approved')
     serializer_class = ProductSerializer
     permission_classes = [AllowAny]
     
