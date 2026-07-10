@@ -46,7 +46,6 @@ class ReportModerationAPIView(ModelViewSet):
         report.save()
         return super().partial_update(request, *args, **kwargs)
 
-
 class GetUsersAPIView(generics.ListAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAdminUser]
@@ -70,36 +69,18 @@ class ManageUserAPIView(generics.CreateAPIView):
             user.save()
         return Response({'status': 'success'})
 
-class GetProductsAPIView(generics.ListAPIView):
+class ManageProductAPIView(ModelViewSet):
     serializer_class = ProductSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [AllowAny]
     queryset = Product.objects.all()
 
-class ManageProductAPIView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = ProductSerializer
-    permission_classes = [IsAdminUser]
-    queryset = Product.objects.all()
-
-    def get_product(self):
-        return Product.objects.get(id=self.kwargs['pk'])
-
-    def patch(self, request, *args, **kwargs):
-        product = self.get_product()
+    def partial_update(self, request, *args, **kwargs):
+        product = self.get_object()
         product.status = request.data['status']
         product.save()
-        return Response(
-            {
-                'status':'success'
-            }
-        )
+        return super().partial_update(request, *args, **kwargs)
 
-class CategoryManagementAPIView(ReadOnlyModelViewSet, generics.CreateAPIView):
+class CategoryManagementAPIView(ModelViewSet):
     serializer_class = CategorySerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [AllowAny]
     queryset = Category.objects.all()
-
-class RetirieveUpdateDestroyCategoryAPIView(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAdminUser]
-    serializer_class = CategorySerializer
-    queryset = Category.objects.all()
-
