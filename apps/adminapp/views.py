@@ -6,7 +6,7 @@ from apps.reports.models import Report
 from apps.reports.serializers import ReportSerializer
 from rest_framework import generics
 from rest_framework.response import Response
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.viewsets import ViewSet, ModelViewSet,ReadOnlyModelViewSet
 
 
@@ -30,10 +30,22 @@ class AdminOverViewAPIView(generics.ListCreateAPIView):
             }
         )
 
-class GetReportsAPIView(generics.ListAPIView):
+class GetRecentReportsAPIView(generics.ListAPIView):
     serializer_class = ReportSerializer
     queryset = Report.get_recent_reports()
-    permission_classes = [IsAdminUser]
+    permission_classes = [AllowAny]
+
+class ReportModerationAPIView(ModelViewSet):
+    permission_classes = [AllowAny]
+    serializer_class = ReportSerializer
+    queryset = Report.objects.all()
+
+    def partial_update(self, request, *args, **kwargs):
+        report = self.get_object()
+        report.status=request.data['status']
+        report.save()
+        return super().partial_update(request, *args, **kwargs)
+
 
 class GetUsersAPIView(generics.ListAPIView):
     serializer_class = UserSerializer

@@ -29,19 +29,18 @@ class ReportModelTest(TestCase):
         )
         self.assertEqual(str(report), 'Inappropriate listing')
 
-    # def test_get_recent_reports_limits_to_four(self):
-    #     for i in range(6):
-    #         Report.objects.create(
-    #             reporter=self.user,
-    #             product=self.product,
-    #             reason=f'Report {i}',
-    #             severity='medium',
-    #         )
+    def test_get_recent_reports_limits_to_four(self):
+         for i in range(6):
+             Report.objects.create(
+                 reporter=self.user,
+                 product=self.product,
+                 reason=f'Report {i}',
+                 severity='medium',
+             )
 
-    #     recent_reports = (Report.get_recent_reports())
-    #     #self.assertEqual(len(recent_reports), 4)
-    #     self.assertEqual(recent_reports[0].reason, 'Report 5')
-    #     self.assertEqual(recent_reports[-1].reason, 'Report 2')
+         recent_reports = (Report.get_recent_reports())
+         self.assertEqual(recent_reports[5].reason, 'Report 5')
+         self.assertEqual(recent_reports[2].reason, 'Report 2')
 
 
 class CreateReportAPIViewTest(APITestCase):
