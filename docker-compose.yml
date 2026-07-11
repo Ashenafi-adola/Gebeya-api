@@ -2,7 +2,7 @@ services:
   web:
     build:
       context: .
-      dockerfile: apps/Dockerfile
+      #dockerfile: apps/Dockerfile
     container_name: gebeya-api
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
