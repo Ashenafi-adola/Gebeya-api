@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 
 class CategoriesAPIView(generics.ListAPIView):
     serializer_class = CategorySerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     queryset = Category.objects.all()
 
 class RetriveUpdateDestroyCategoryAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -135,7 +135,7 @@ class GetFavorities(generics.RetrieveAPIView):
         try:
             return Favorities.objects.get(user=self.request.user)
         except Favorities.DoesNotExist:
-            return None
+            return Favorities.objects.create(user=self.request.user)
     def get(self, request, *args, **kwargs):
         if self.user_fav() == None:
             return Response("Not loged  in")
