@@ -33,10 +33,10 @@ class AdminOverViewAPIView(generics.ListCreateAPIView):
 class GetRecentReportsAPIView(generics.ListAPIView):
     serializer_class = ReportSerializer
     queryset = Report.get_recent_reports()
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdminUser]
 
 class ReportModerationAPIView(ModelViewSet):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdminUser]
     serializer_class = ReportSerializer
     queryset = Report.objects.all()
 
@@ -48,7 +48,7 @@ class ReportModerationAPIView(ModelViewSet):
 
 class ManageUserAPIView(ModelViewSet):
     serializer_class = UserSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdminUser]
     queryset = User.objects.all()
 
     def partial_update(self, request, *args, **kwargs):
@@ -62,7 +62,7 @@ class ManageUserAPIView(ModelViewSet):
 
 class ManageProductAPIView(ModelViewSet):
     serializer_class = ProductSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdminUser]
     queryset = Product.objects.all()
 
     def partial_update(self, request, *args, **kwargs):
@@ -73,5 +73,5 @@ class ManageProductAPIView(ModelViewSet):
 
 class CategoryManagementAPIView(ModelViewSet):
     serializer_class = CategorySerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdminUser]
     queryset = Category.objects.all()
