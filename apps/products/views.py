@@ -1,10 +1,7 @@
-from rest_framework import generics, views, viewsets
-from . serializers import ProductSerializer, CategorySerializer, ProductAttributeSerializer, ProductImageSerializer, FavoritiesSerializer
-from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
-from . models import Product, ProductAttribute, Category, ProductImage, Favorities
-from rest_framework.exceptions import PermissionDenied
-from rest_framework.reverse import reverse
-from rest_framework import  status
+from rest_framework import generics
+from . serializers import ProductSerializer, CategorySerializer, FavoritiesSerializer
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from . models import Product, Category, Favorities
 from rest_framework.response import Response   
 from rest_framework.viewsets import ModelViewSet
 
@@ -36,7 +33,6 @@ class ManageMyProducts(ModelViewSet):
         data = request.data.copy()
         cate = self.get_category(data['category'])
         data['category'] = cate.id
-        print(data)
         serializer = ProductSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -49,10 +45,10 @@ class ManageMyProducts(ModelViewSet):
         if self.request.user.id is not None:
             if self.request.user not in views:
                 self.get_object().views.add(self.request.user)
-        return super().get(request, *args, **kwargs)
+        return super().retrieve(request, *args, **kwargs)
 
     def get_queryset(self):
-        return Product.objects.filter(seller= self.request.user)
+        return Product.objects.filter(seller=self.request.user)
     
 class GetMyFavoriteProductsAPIView(generics.ListAPIView):
     serializer_class = ProductSerializer
