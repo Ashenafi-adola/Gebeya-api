@@ -1,32 +1,21 @@
-from rest_framework import generics, views, viewsets
-from . serializers import ProductSerializer, CategorySerializer, ProductAttributeSerializer, ProductImageSerializer, FavoritiesSerializer
-from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
-from . models import Product, ProductAttribute, Category, ProductImage, Favorities
-from rest_framework.exceptions import PermissionDenied
-from rest_framework.reverse import reverse
-from rest_framework import  status
+from rest_framework import generics
+from . serializers import ProductSerializer, CategorySerializer, FavoritiesSerializer
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from . models import Product, Category, Favorities
 from rest_framework.response import Response   
-from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 
 class CategoriesAPIView(generics.ListAPIView):
     serializer_class = CategorySerializer
     permission_classes = [AllowAny]
     queryset = Category.objects.all()
-
-class RetriveUpdateDestroyCategoryAPIView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = CategorySerializer
-    permission_classes = [IsAdminUser]
-    queryset = Category.objects.all()
-
     
 class GetAllProductsAPIView(generics.ListAPIView):
     queryset = Product.objects.filter(status='Approved')
     serializer_class = ProductSerializer
     permission_classes = [AllowAny]
-    
         
-class AddProductAPIView(generics.CreateAPIView):
-    queryset = Product.objects.all()
+class ManageMyProducts(ModelViewSet):
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated]
 
@@ -40,50 +29,26 @@ class AddProductAPIView(generics.CreateAPIView):
         instance = serializer.save(seller=self.request.user,category=self.get_category(self.request.data['category']))
         self.created_instance = instance
 
-    def post(self, request, *args, **kwargs):
+    def create(self, request, *args, **kwargs):
         data = request.data.copy()
         cate = self.get_category(data['category'])
         data['category'] = cate.id
-        print(data)
         serializer = ProductSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         return Response(
             serializer.data
         )
-
-
-class AddProductImage(generics.CreateAPIView):
-    queryset = ProductImage.objects.all()
-    serializer_class = ProductImageSerializer
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
-
-class RetriveUpdateDestroyProductAPIView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = ProductSerializer
-    permission_classes = [AllowAny]
-    queryset = Product.objects.all()
-
-    def get_product(self):
-        return Product.objects.get(id=self.kwargs['pk'])
-
-    def get(self, request, *args, **kwargs):
-        views = self.get_product().views.all()
+    
+    def retrieve(self, request, *args, **kwargs):
+        views = self.get_object().views.all()
         if self.request.user.id is not None:
             if self.request.user not in views:
-                self.get_product().views.add(self.request.user)
-        return super().get(request, *args, **kwargs)
-    def delete(self, request, *args, **kwargs):
-        return super().delete(request, *args, **kwargs)
-
-class GetMyProductsAPIView(generics.ListAPIView):
-    serializer_class = ProductSerializer
-    permission_classes = [IsAuthenticated]
+                self.get_object().views.add(self.request.user)
+        return super().retrieve(request, *args, **kwargs)
 
     def get_queryset(self):
-        return Product.objects.filter(seller= self.request.user)
+        return Product.objects.filter(seller=self.request.user)
     
 class GetMyFavoriteProductsAPIView(generics.ListAPIView):
     serializer_class = ProductSerializer
@@ -110,16 +75,6 @@ class GetMyTotalAPIView(generics.RetrieveAPIView):
             'total_views':total_views
         }
         return Response(res)
-    
-class CategoryListAPIView(generics.ListAPIView):
-    queryset = Category.objects.all()
-    permission_classes = [AllowAny]
-    serializer_class = CategorySerializer
-
-class CategoryProductListAPIView(generics.ListAPIView):
-    queryset = Product.objects.all()
-    permission_classes = [AllowAny]
-    serializer_class = ProductSerializer
 
 class ProductDetailAPIView(generics.RetrieveAPIView):
     queryset = Product.objects.all()
@@ -160,4 +115,3 @@ class GetFavorities(generics.RetrieveAPIView):
         return Response(
             serializer.data
         )
-        

@@ -58,7 +58,7 @@ class ProductAppTests(TestCase):
             "category": self.category.name,
         }
 
-        response = self.client.post("/products/products/new/", payload, format="json")
+        response = self.client.post("/products/myproducts/", payload, format="json")
 
         self.assertEqual(response.status_code, 401)
         self.assertEqual(Product.objects.count(), 0)
@@ -73,7 +73,7 @@ class ProductAppTests(TestCase):
             "category": self.category.name,
         }
 
-        response = self.client.post("/products/products/new/", payload, format="json")
+        response = self.client.post("/products/myproducts/", payload, format="json")
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Product.objects.count(), 1)
@@ -85,7 +85,7 @@ class ProductAppTests(TestCase):
         product = self.create_product(name="Viewed Product", status="Approved")
         self.client.force_authenticate(user=self.user)
 
-        response = self.client.get(f"/products/product-detail/{product.id}/")
+        response = self.client.get(f"/products/myproducts/{product.id}/")
 
         self.assertEqual(response.status_code, 200)
         product.refresh_from_db()
