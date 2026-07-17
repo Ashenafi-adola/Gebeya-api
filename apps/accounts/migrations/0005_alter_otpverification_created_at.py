@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0004_alter_otpverification_user'),
+        ("accounts", "0004_alter_otpverification_user"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='otpverification',
-            name='created_at',
+            model_name="otpverification",
+            name="created_at",
             field=models.DateTimeField(auto_now=True),
         ),
     ]

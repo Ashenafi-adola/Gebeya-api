@@ -7,11 +7,11 @@ from apps.reports.serializers import ReportSerializer
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, AllowAny
-from rest_framework.viewsets import ViewSet, ModelViewSet,ReadOnlyModelViewSet
+from rest_framework.viewsets import ViewSet, ModelViewSet, ReadOnlyModelViewSet
 
 
 class AdminOverViewAPIView(generics.ListCreateAPIView):
-    serializer_class  = UserSerializer
+    serializer_class = UserSerializer
     permission_classes = [IsAdminUser]
     queryset = User.objects.all()
 
@@ -23,17 +23,19 @@ class AdminOverViewAPIView(generics.ListCreateAPIView):
 
         return Response(
             {
-                'users':users, 
-                'products': products, 
-                'pending': pending_product,
-                'reports': reports
+                "users": users,
+                "products": products,
+                "pending": pending_product,
+                "reports": reports,
             }
         )
+
 
 class GetRecentReportsAPIView(generics.ListAPIView):
     serializer_class = ReportSerializer
     queryset = Report.get_recent_reports()
     permission_classes = [IsAdminUser]
+
 
 class ReportModerationAPIView(ModelViewSet):
     permission_classes = [IsAdminUser]
@@ -42,9 +44,10 @@ class ReportModerationAPIView(ModelViewSet):
 
     def partial_update(self, request, *args, **kwargs):
         report = self.get_object()
-        report.status=request.data['status']
+        report.status = request.data["status"]
         report.save()
         return super().partial_update(request, *args, **kwargs)
+
 
 class ManageUserAPIView(ModelViewSet):
     serializer_class = UserSerializer
@@ -53,12 +56,13 @@ class ManageUserAPIView(ModelViewSet):
 
     def partial_update(self, request, *args, **kwargs):
         user = self.get_object()
-        if 'is_active' in request.data:
-            user.is_active = request.data['is_active']
-        elif 'is_superuser' in request.data:
-            user.is_superuser = request.data['is_superuser']
+        if "is_active" in request.data:
+            user.is_active = request.data["is_active"]
+        elif "is_superuser" in request.data:
+            user.is_superuser = request.data["is_superuser"]
         user.save()
-        return Response({'status': 'success'})
+        return Response({"status": "success"})
+
 
 class ManageProductAPIView(ModelViewSet):
     serializer_class = ProductSerializer
@@ -67,9 +71,10 @@ class ManageProductAPIView(ModelViewSet):
 
     def partial_update(self, request, *args, **kwargs):
         product = self.get_object()
-        product.status = request.data['status']
+        product.status = request.data["status"]
         product.save()
         return super().partial_update(request, *args, **kwargs)
+
 
 class CategoryManagementAPIView(ModelViewSet):
     serializer_class = CategorySerializer
