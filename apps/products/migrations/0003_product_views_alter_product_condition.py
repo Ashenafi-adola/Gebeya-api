@@ -5,21 +5,25 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('products', '0002_product_image'),
+        ("products", "0002_product_image"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='product',
-            name='views',
-            field=models.ManyToManyField(related_name='views', to=settings.AUTH_USER_MODEL),
+            model_name="product",
+            name="views",
+            field=models.ManyToManyField(
+                related_name="views", to=settings.AUTH_USER_MODEL
+            ),
         ),
         migrations.AlterField(
-            model_name='product',
-            name='condition',
-            field=models.CharField(choices=[('New', 'New'), ('Used', 'Used'), ('Like New', 'Like New')], max_length=50),
+            model_name="product",
+            name="condition",
+            field=models.CharField(
+                choices=[("New", "New"), ("Used", "Used"), ("Like New", "Like New")],
+                max_length=50,
+            ),
         ),
     ]

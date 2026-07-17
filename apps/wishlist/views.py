@@ -1,8 +1,9 @@
 from rest_framework import generics
-from . models import WishList
+from .models import WishList
 from apps.products.models import Product
 from rest_framework.permissions import IsAuthenticated
-from . serializers import WishListSerializer
+from .serializers import WishListSerializer
+
 
 class AddProductToWishListAPIView(generics.UpdateAPIView):
     permission_classes = IsAuthenticated
@@ -11,12 +12,12 @@ class AddProductToWishListAPIView(generics.UpdateAPIView):
 
     def get_object(self):
         return WishList.objects.get(user=self.request.user)
-    
+
     def patch(self, request, *args, **kwargs):
         wishlistProducts = self.get_object().products
-        product = Product.objects.get(id=self.kwargs['pk'])
+        product = Product.objects.get(id=self.kwargs["pk"])
 
         if product not in wishlistProducts:
             wishlistProducts.add(product)
         else:
-            wishlistProducts.remove(product) 
+            wishlistProducts.remove(product)

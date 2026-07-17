@@ -4,19 +4,22 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('products', '0003_product_views_alter_product_condition'),
+        ("products", "0003_product_views_alter_product_condition"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='product',
-            options={'ordering': ['-posted_date']},
+            name="product",
+            options={"ordering": ["-posted_date"]},
         ),
         migrations.AlterField(
-            model_name='product',
-            name='condition',
-            field=models.CharField(choices=[('New', 'New'), ('Used', 'Used'), ('Like New', 'Like New')], default='New', max_length=50),
+            model_name="product",
+            name="condition",
+            field=models.CharField(
+                choices=[("New", "New"), ("Used", "Used"), ("Like New", "Like New")],
+                default="New",
+                max_length=50,
+            ),
         ),
     ]

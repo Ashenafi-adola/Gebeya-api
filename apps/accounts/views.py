@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from rest_framework import generics, viewsets
 from rest_framework.views import APIView
-from . models import User, Address, Contact, OTPVerification
-from . serializers import UserSerializer, AddressSerializer, ContactSerializer
+from .models import User, Address, Contact, OTPVerification
+from .serializers import UserSerializer, AddressSerializer, ContactSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth import login, authenticate, logout
 from rest_framework import status
@@ -19,13 +19,18 @@ class ManageUserAPIVew(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return User.objects.all().exclude(id=self.request.user.id).exclude(is_superuser=True) 
-    
+        return (
+            User.objects.all()
+            .exclude(id=self.request.user.id)
+            .exclude(is_superuser=True)
+        )
+
     def get_object(self):
-        user = User.objects.get(id=self.kwargs['pk'])
+        user = User.objects.get(id=self.kwargs["pk"])
         if user == self.request.user:
             return user
         return super().get_object()
+
 
 class RegisterUserAPIView(generics.CreateAPIView):
     serializer_class = UserSerializer
@@ -40,48 +45,48 @@ class RegisterUserAPIView(generics.CreateAPIView):
             WishList.objects.create(user=instance)
             Favorities.objects.create(user=instance)
             self.created_instance = instance
-            return Response(
-                serializer.data
-            )
+            return Response(serializer.data)
         else:
             pass
-    
+
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
-        return Response(
-            serializer.data
-        )
- 
-         
+        return Response(serializer.data)
+
+
 class VerifyEmailAPIView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
     queryset = User
-    lookup_field = 'email'
+    lookup_field = "email"
 
     def get_object(self):
-        return User.objects.get(email=self.kwargs['email']) 
+        return User.objects.get(email=self.kwargs["email"])
 
     def post(self, request, *args, **kwargs):
         print(request.data)
-        user = User.objects.get(email=self.kwargs['email'])
+        user = User.objects.get(email=self.kwargs["email"])
         OTP = OTPVerification.objects.get(user=self.get_object())
         if OTP.is_expired():
             otp_code = generate_otp()
             OTP.otp = otp_code
             OTP.save()
-            send_email(request.data['email'], otp_code)
-            return Response({'message': 'OTP expired', 'is_verified': user.is_verified})
+            send_email(request.data["email"], otp_code)
+            return Response({"message": "OTP expired", "is_verified": user.is_verified})
         else:
-            if request.data['otp'] == OTP.otp:
+            if request.data["otp"] == OTP.otp:
                 user.is_verified = True
                 user.save()
-                return Response({"message": "Successfull verifyed", 'is_verified': user.is_verified})
+                return Response(
+                    {"message": "Successfull verifyed", "is_verified": user.is_verified}
+                )
             else:
-                return Response({"message": "Incorrenct OTP code!", 'is_verified': user.is_verified})
+                return Response(
+                    {"message": "Incorrenct OTP code!", "is_verified": user.is_verified}
+                )
 
 
 class GetProductSellerAPIView(generics.RetrieveAPIView):
@@ -90,7 +95,7 @@ class GetProductSellerAPIView(generics.RetrieveAPIView):
     permission_classes = [AllowAny]
 
     def get_object(self):
-        return Product.objects.get(id=self.kwargs['pk'])
+        return Product.objects.get(id=self.kwargs["pk"])
 
     def get(self, request, *args, **kwargs):
         user = self.get_object().seller
@@ -99,14 +104,15 @@ class GetProductSellerAPIView(generics.RetrieveAPIView):
             serializer.data,
         )
 
-    
+
 class GetUserByEmail(generics.RetrieveAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
     queryset = User.objects.all()
 
     def get_object(self):
-        return User.objects.get(email=self.kwargs['email'])
+        return User.objects.get(email=self.kwargs["email"])
+
 
 class GetMyContacts(generics.RetrieveAPIView):
     serializer_class = ContactSerializer

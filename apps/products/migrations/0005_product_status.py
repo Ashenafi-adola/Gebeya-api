@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('products', '0004_alter_product_options_alter_product_condition'),
+        ("products", "0004_alter_product_options_alter_product_condition"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='product',
-            name='status',
-            field=models.CharField(default='Pending', max_length=50),
+            model_name="product",
+            name="status",
+            field=models.CharField(default="Pending", max_length=50),
         ),
     ]

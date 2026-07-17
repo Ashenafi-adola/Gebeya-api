@@ -13,14 +13,15 @@ class PublicTokenObtainPairView(TokenObtainPairView):
 class PublicTokenRefreshView(TokenRefreshView):
     permission_classes = [AllowAny]
 
+
 urlpatterns = [
-    path('admin/', include('apps.adminapp.urls')),
-    path('accounts/', include('apps.accounts.urls')),
-    path('products/', include('apps.products.urls')),
-    path('reports/', include('apps.reports.urls')),
-    path('chat/', include('apps.chat.urls')),
-    path('wishlist/', include('apps.wishlist.urls')),
-    path('api-auth/', include('rest_framework.urls')),
-    path('api/token/', PublicTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', PublicTokenRefreshView.as_view(), name='token_refresh'),
+    path("admin/", include("apps.adminapp.urls")),
+    path("accounts/", include("apps.accounts.urls")),
+    path("products/", include("apps.products.urls")),
+    path("reports/", include("apps.reports.urls")),
+    path("chat/", include("apps.chat.urls")),
+    path("wishlist/", include("apps.wishlist.urls")),
+    path("api-auth/", include("rest_framework.urls")),
+    path("api/token/", PublicTokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/token/refresh/", PublicTokenRefreshView.as_view(), name="token_refresh"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
