@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('products', '0005_product_status'),
+        ("products", "0005_product_status"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='category',
-            name='icon',
-            field=models.CharField(default='📦', max_length=1),
+            model_name="category",
+            name="icon",
+            field=models.CharField(default="📦", max_length=1),
         ),
     ]

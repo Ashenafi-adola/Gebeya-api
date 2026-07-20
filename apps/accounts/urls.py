@@ -1,16 +1,15 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register(r"users", views.ManageUserAPIVew, basename="user")
 
 urlpatterns = [
-    path('register/', views.CreateUserAPIView.as_view(), name='register'),
-    path('add-address/', views.AddAddressAPIView.as_view(), name='add-address'),
-    path('update-user/', views.UpdateUserAPIView.as_view()),
-    path('update-address/', views.UpdateAddressAPIView.as_view()),
-    path('get-user/<int:pk>/', views.GetProductSellerAPIView.as_view()),
-    path('get-user/', views.GetUserAPIView.as_view()),
+    path("", include(router.urls)),
+    path("register/", views.RegisterUserAPIView.as_view()),
+    path("get-user/<int:pk>/", views.GetProductSellerAPIView.as_view()),
     path("get-user-by-email/<str:email>/", views.GetUserByEmail.as_view()),
-    path("get-user-by-id/<int:pk>/", views.GetUserByIdAPIView.as_view()),
-    path('get-all-users/', views.GetAllUsersAPIView.as_view()),
-    path('get-my-contacts/', views.GetMyContacts.as_view()),
-    path('verify-email/<str:email>/', views.VerifyEmailAPIView.as_view())
+    path("get-my-contacts/", views.GetMyContacts.as_view()),
+    path("verify-email/<str:email>/", views.VerifyEmailAPIView.as_view()),
 ]

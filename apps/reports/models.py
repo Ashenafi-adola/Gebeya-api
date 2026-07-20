@@ -1,6 +1,8 @@
 from django.db import models
 from apps.accounts.models import User
 from apps.products.models import Product
+from django.utils import timezone, timesince
+from datetime import timedelta
 
 
 class Report(models.Model):
@@ -16,4 +18,4 @@ class Report(models.Model):
 
     @classmethod
     def get_recent_reports(cls):
-        return cls.objects.all()
+        return cls.objects.filter(reported_at__gt=(timezone.now() - timedelta(days=7)))
