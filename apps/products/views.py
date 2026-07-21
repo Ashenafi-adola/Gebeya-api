@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Product, Category, Favorities
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from django.core.cache import cache
 
 
 class CategoriesAPIView(generics.ListAPIView):
@@ -16,6 +17,16 @@ class GetAllProductsAPIView(generics.ListAPIView):
     queryset = Product.objects.filter(status="Approved")
     serializer_class = ProductSerializer
     permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        products = cache.get("products")
+        
+        if not products:
+            products = Product.objects.filter(status="Approved")
+            cache.set("products", products, timeout=60*30)
+            return products
+        
+        return products
 
 
 class ManageMyProducts(ModelViewSet):
