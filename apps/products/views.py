@@ -5,6 +5,7 @@ from .models import Product, Category, Favorities
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from django.core.cache import cache
+from django.db.models import Q
 
 
 class CategoriesAPIView(generics.ListAPIView):
@@ -19,14 +20,10 @@ class GetAllProductsAPIView(generics.ListAPIView):
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        products = cache.get("products")
-        
-        if not products:
-            products = Product.objects.filter(status="Approved")
-            cache.set("products", products, timeout=60*30)
-            return products
-        
-        return products
+        qs = Product.objects.filter(status="Approved")
+        if search := self.request.query_params.get("search"):
+            qs = qs.filter(Q(name__icontains=search))
+        return qs
 
 
 class ManageMyProducts(ModelViewSet):
@@ -54,13 +51,6 @@ class ManageMyProducts(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         return Response(serializer.data)
-
-    def retrieve(self, request, *args, **kwargs):
-        views = self.get_object().views.all()
-        if self.request.user.id is not None:
-            if self.request.user not in views:
-                self.get_object().views.add(self.request.user)
-        return super().retrieve(request, *args, **kwargs)
 
     def get_queryset(self):
         return Product.objects.filter(seller=self.request.user)
@@ -96,6 +86,13 @@ class ProductDetailAPIView(generics.RetrieveAPIView):
     queryset = Product.objects.all()
     permission_classes = [AllowAny]
     serializer_class = ProductSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        views = self.get_object().views.all()
+        if self.request.user.id is not None:
+            if self.request.user not in views:
+                self.get_object().views.add(self.request.user)
+        return super().retrieve(request, *args, **kwargs)
 
 
 class GetFavorities(generics.RetrieveAPIView):
