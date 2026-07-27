@@ -8,6 +8,7 @@ router.register(r"myproducts", views.ManageMyProducts, basename="product")
 urlpatterns = [
     path("categories/", views.CategoriesAPIView.as_view()),
     path("products/", views.GetAllProductsAPIView.as_view()),
+    path("featured/", views.GetFeaturedProducts.as_view()),
     path("", include(router.urls)),
     path(
         "pro-detail/<int:pk>/", views.ProductDetailAPIView.as_view(), name="pro-detail"

@@ -25,6 +25,12 @@ class GetAllProductsAPIView(generics.ListAPIView):
             qs = qs.filter(Q(name__icontains=search))
         return qs
 
+class GetFeaturedProducts(generics.ListAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        return Product.objects.filter(is_featured=True)
 
 class ManageMyProducts(ModelViewSet):
     serializer_class = ProductSerializer
