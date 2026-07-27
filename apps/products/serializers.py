@@ -30,11 +30,13 @@ class ProductSerializer(ModelSerializer):
             "posted_date",
             "seller",
             "status",
+            "is_featured",
         ]
         extra_kwargs = {
             "seller": {"read_only": True},
             "views": {"read_only": True},
             "status": {"read_only": True},
+            "is_featured": {"read_only": True}
         }
 
     def get_no_views(self, obj):
