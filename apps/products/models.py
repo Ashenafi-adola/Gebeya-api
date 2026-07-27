@@ -12,7 +12,7 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    is_featured = models.BooleanField(default=False)
+    featured = models.CharField(default="NR", max_length=100)
     name = models.CharField(max_length=50)
     price = models.DecimalField(decimal_places=2, max_digits=10)
     image = models.ImageField(upload_to="products/images", null=True, blank=True)

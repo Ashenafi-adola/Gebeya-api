@@ -30,7 +30,7 @@ class GetFeaturedProducts(generics.ListAPIView):
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        return Product.objects.filter(is_featured=True)
+        return Product.objects.filter(featured="Featured")
 
 
 class ManageMyProducts(ModelViewSet):
