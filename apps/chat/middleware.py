@@ -12,7 +12,7 @@ User = get_user_model()
 def get_user(user_id):
     try:
         return User.objects.get(id=user_id)
-    except:
+    except Exception:
         return AnonymousUser
 
 

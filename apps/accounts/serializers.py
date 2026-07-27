@@ -1,7 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 from .models import User, Address, Contact
-from django.contrib.auth import password_validation
 from apps.products.models import Product
 
 

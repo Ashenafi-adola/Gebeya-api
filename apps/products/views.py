@@ -4,7 +4,6 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Product, Category, Favorities
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from django.core.cache import cache
 from django.db.models import Q
 
 
@@ -24,6 +23,14 @@ class GetAllProductsAPIView(generics.ListAPIView):
         if search := self.request.query_params.get("search"):
             qs = qs.filter(Q(name__icontains=search))
         return qs
+
+
+class GetFeaturedProducts(generics.ListAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        return Product.objects.filter(is_featured=True)
 
 
 class ManageMyProducts(ModelViewSet):
@@ -107,7 +114,7 @@ class GetFavorities(generics.RetrieveAPIView):
             return Favorities.objects.create(user=self.request.user)
 
     def get(self, request, *args, **kwargs):
-        if self.user_fav() == None:
+        if self.user_fav() is None:
             return Response("Not loged  in")
         serializer = FavoritiesSerializer(self.user_fav())
         return Response(serializer.data)
@@ -116,7 +123,7 @@ class GetFavorities(generics.RetrieveAPIView):
         pro_id = self.kwargs["pk"]
         fav_pros = self.user_fav().product
         pro = Product.objects.get(id=pro_id)
-        if self.user_fav() == None:
+        if self.user_fav() is None:
             return Response("No NO oops")
 
         if pro in fav_pros.all():
