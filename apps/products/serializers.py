@@ -1,7 +1,6 @@
-from rest_framework.serializers import ModelSerializer, HyperlinkedIdentityField
+from rest_framework.serializers import ModelSerializer
 from .models import Category, Product, ProductAttribute, ProductImage, Favorities
 from rest_framework import serializers
-from apps.accounts.models import User
 
 
 class CategorySerializer(ModelSerializer):
@@ -36,7 +35,7 @@ class ProductSerializer(ModelSerializer):
             "seller": {"read_only": True},
             "views": {"read_only": True},
             "status": {"read_only": True},
-            "is_featured": {"read_only": True}
+            "is_featured": {"read_only": True},
         }
 
     def get_no_views(self, obj):

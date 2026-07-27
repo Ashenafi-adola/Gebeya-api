@@ -1,7 +1,7 @@
 from django.db import models
 from apps.accounts.models import User
 from apps.products.models import Product
-from django.utils import timezone, timesince
+from django.utils import timezone
 from datetime import timedelta
 
 

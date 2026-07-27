@@ -6,8 +6,8 @@ from apps.reports.models import Report
 from apps.reports.serializers import ReportSerializer
 from rest_framework import generics
 from rest_framework.response import Response
-from rest_framework.permissions import IsAdminUser, AllowAny
-from rest_framework.viewsets import ViewSet, ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.permissions import IsAdminUser
+from rest_framework.viewsets import ModelViewSet
 
 
 class AdminOverViewAPIView(generics.ListCreateAPIView):

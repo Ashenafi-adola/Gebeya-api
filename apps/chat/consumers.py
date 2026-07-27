@@ -3,8 +3,6 @@ from channels.db import database_sync_to_async
 from .models import Message
 from apps.accounts.models import User, Contact
 import json
-from django.utils import timezone
-from django.core.mail import send_mail
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
