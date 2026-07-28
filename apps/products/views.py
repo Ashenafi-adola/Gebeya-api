@@ -30,7 +30,7 @@ class GetFeaturedProducts(generics.ListAPIView):
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        return Product.objects.filter(is_featured=True)
+        return Product.objects.filter(featured="Featured")
 
 
 class ManageMyProducts(ModelViewSet):
@@ -61,6 +61,15 @@ class ManageMyProducts(ModelViewSet):
 
     def get_queryset(self):
         return Product.objects.filter(seller=self.request.user)
+
+    def update(self, request, *args, **kwargs):
+        p = self.get_object()
+        if request.data["action"] == "fr-request":
+            p.featured = "Pending"
+            p.save()
+            return Response({"response": "Pending"})
+
+        return super().update(request, *args, **kwargs)
 
 
 class GetMyFavoriteProductsAPIView(generics.ListAPIView):
