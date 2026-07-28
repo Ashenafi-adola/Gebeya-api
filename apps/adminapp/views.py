@@ -69,13 +69,24 @@ class ManageProductAPIView(ModelViewSet):
     permission_classes = [IsAdminUser]
     queryset = Product.objects.all()
 
-    def partial_update(self, request, *args, **kwargs):
+    def partial_update(self, request, *args, **kwargs):        
         product = self.get_object()
-        product.status = request.data["status"]
-        product.save()
+        try:
+            if request.data["action"] == "accept":
+                print(request.data)
+                product.featured = "Featured"
+                product.save()
+                return Response({"response": "Featured"})
+            
+            elif request.data["action"] == "reject":
+                product.featured = "NR"
+                product.save()
+                return Response({"response": "NR"})
+        except KeyError:
+            product.status = request.data["status"]
+            product.save()
         return super().partial_update(request, *args, **kwargs)
-
-
+        
 class CategoryManagementAPIView(ModelViewSet):
     serializer_class = CategorySerializer
     permission_classes = [IsAdminUser]
