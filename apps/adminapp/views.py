@@ -69,7 +69,7 @@ class ManageProductAPIView(ModelViewSet):
     permission_classes = [IsAdminUser]
     queryset = Product.objects.all()
 
-    def partial_update(self, request, *args, **kwargs):        
+    def partial_update(self, request, *args, **kwargs):
         product = self.get_object()
         try:
             if request.data["action"] == "accept":
@@ -77,7 +77,7 @@ class ManageProductAPIView(ModelViewSet):
                 product.featured = "Featured"
                 product.save()
                 return Response({"response": "Featured"})
-            
+
             elif request.data["action"] == "reject":
                 product.featured = "NR"
                 product.save()
@@ -86,7 +86,8 @@ class ManageProductAPIView(ModelViewSet):
             product.status = request.data["status"]
             product.save()
         return super().partial_update(request, *args, **kwargs)
-        
+
+
 class CategoryManagementAPIView(ModelViewSet):
     serializer_class = CategorySerializer
     permission_classes = [IsAdminUser]

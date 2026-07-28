@@ -68,7 +68,7 @@ class ManageMyProducts(ModelViewSet):
             p.featured = "Pending"
             p.save()
             return Response({"response": "Pending"})
-        
+
         return super().update(request, *args, **kwargs)
 
 
