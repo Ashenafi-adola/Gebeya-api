@@ -22,6 +22,19 @@ class GetAllProductsAPIView(generics.ListAPIView):
         qs = Product.objects.filter(status="Approved")
         if search := self.request.query_params.get("search"):
             qs = qs.filter(Q(name__icontains=search))
+
+        if category := self.request.query_params.get("category"):
+            cat = Category.objects.get(name=category)
+            qs = qs.filter(category=cat.id)
+
+        if condition := self.request.query_params.get("condition"):
+            qs = qs.filter(condition=condition)
+
+        if max_price := self.request.query_params.get("max_price"):
+            qs = qs.filter(price__lte=max_price)
+
+        if min_price := self.request.query_params.get("min_price"):
+            qs = qs.filter(price__gte=min_price)
         return qs
 
 
