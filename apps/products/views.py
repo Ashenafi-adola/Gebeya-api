@@ -5,6 +5,7 @@ from .models import Product, Category, Favorities
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from django.db.models import Q
+from django.core.cache import cache
 
 
 class CategoriesAPIView(generics.ListAPIView):
@@ -43,7 +44,11 @@ class GetFeaturedProducts(generics.ListAPIView):
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        return Product.objects.filter(featured="Featured")
+        if fp := cache.get("fp"):
+            return fp
+        fp = Product.objects.filter(featured="Featured")
+        cache.set("fp", fp, timeout=60*60*6)
+        return fp
 
 
 class ManageMyProducts(ModelViewSet):
