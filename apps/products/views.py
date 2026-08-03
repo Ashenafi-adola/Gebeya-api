@@ -2,9 +2,11 @@ from rest_framework import generics
 from .serializers import ProductSerializer, CategorySerializer, FavoritiesSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Product, Category, Favorities
+from .paginators import CustomPageNumberPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from django.db.models import Q
+from django.core.cache import cache
 
 
 class CategoriesAPIView(generics.ListAPIView):
@@ -17,6 +19,10 @@ class GetAllProductsAPIView(generics.ListAPIView):
     queryset = Product.objects.filter(status="Approved")
     serializer_class = ProductSerializer
     permission_classes = [AllowAny]
+    pagination_class = CustomPageNumberPagination
+
+    def paginate_queryset(self, queryset):
+        return super().paginate_queryset(queryset)
 
     def get_queryset(self):
         qs = Product.objects.filter(status="Approved")
@@ -35,6 +41,7 @@ class GetAllProductsAPIView(generics.ListAPIView):
 
         if min_price := self.request.query_params.get("min_price"):
             qs = qs.filter(price__gte=min_price)
+
         return qs
 
 
@@ -43,7 +50,11 @@ class GetFeaturedProducts(generics.ListAPIView):
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        return Product.objects.filter(featured="Featured")
+        if fp := cache.get("fp"):
+            return fp
+        fp = Product.objects.filter(featured="Featured")
+        cache.set("fp", fp, timeout=60 * 60 * 6)
+        return fp
 
 
 class ManageMyProducts(ModelViewSet):
