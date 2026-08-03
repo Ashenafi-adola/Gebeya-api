@@ -53,7 +53,7 @@ class GetFeaturedProducts(generics.ListAPIView):
         if fp := cache.get("fp"):
             return fp
         fp = Product.objects.filter(featured="Featured")
-        cache.set("fp", fp, timeout=60*60*6)
+        cache.set("fp", fp, timeout=60 * 60 * 6)
         return fp
 
 
