@@ -3,8 +3,9 @@ from .settings import *
 import dj_database_url
 from .settings import BASE_DIR
 
-ALLOWED_HOSTS = (os.environ.get("RENDER_EXTERNAL_HOSTNAME"),)
-CSRF_THRUSTED_ORIGINS = ["https://" + os.environ.get("RENDER_EXTERNAL_HOSTNAME")]
+RENDER_HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
+ALLOWED_HOSTS = [RENDER_HOSTNAME] if RENDER_HOSTNAME else []
+CSRF_TRUSTED_ORIGINS = ["https://" + RENDER_HOSTNAME] if RENDER_HOSTNAME else []
 DEBUG = False
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
@@ -30,8 +31,5 @@ STORAGES = {
 }
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default= os.environ['DATABASE_URL'],
-        conn_max_age=600
-    )
+    'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
 }
