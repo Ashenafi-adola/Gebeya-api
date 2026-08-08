@@ -32,20 +32,17 @@ class RegisterUserAPIView(generics.CreateAPIView):
     permission_classes = [AllowAny]
 
     def perform_create(self, serializer):
-        if serializer.is_valid():
-            instance = serializer.save()
-            otp_code = generate_otp()
-            OTPVerification.objects.create(user=instance, otp=otp_code)
-            send_email(instance.email, otp_code)
-            WishList.objects.create(user=instance)
-            Favorities.objects.create(user=instance)
-            self.created_instance = instance
-            return Response(serializer.data)
-        else:
-            pass
+        instance = serializer.save()
+        otp_code = generate_otp()
+        OTPVerification.objects.create(user=instance, otp=otp_code)
+        send_email(instance.email, otp_code)
+        WishList.objects.create(user=instance)
+        Favorities.objects.create(user=instance)
+        self.created_instance = instance
+        return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        serializer = UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
