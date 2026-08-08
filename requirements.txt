@@ -19,6 +19,7 @@ django-stubs==6.0.5
 django-stubs-ext==6.0.5
 djangorestframework==3.17.1
 djangorestframework_simplejwt==5.5.1
+dj-database-url==3.1.2
 environ==1.0
 hyperlink==21.0.0
 idna==3.18
@@ -48,4 +49,5 @@ types-PyYAML==6.0.12.20260518
 typing_extensions==4.15.0
 tzdata==2026.2
 ujson==5.13.0
+whitenoise==6.12.0
 zope.interface==8.5
