@@ -59,7 +59,6 @@ class VerifyEmailAPIView(generics.RetrieveUpdateAPIView):
         return User.objects.get(email=self.kwargs["email"])
 
     def post(self, request, *args, **kwargs):
-        print(request.data)
         user = User.objects.get(email=self.kwargs["email"])
         OTP = OTPVerification.objects.get(user=self.get_object())
         if OTP.is_expired():
