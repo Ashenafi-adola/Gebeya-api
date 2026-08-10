@@ -14,9 +14,7 @@ from apps.chat import routing
 from apps.chat.middleware import JWTAuthMiddleware
 from channels.security.websocket import AllowedHostsOriginValidator
 
-settings_module = "config.deployment-settings" if "RENDER_EXTERNAL_HOSTNAME" else "config.settings"
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", settings_module)
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 
 django_asgi_app = get_asgi_application()
 
