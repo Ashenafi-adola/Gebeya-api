@@ -131,7 +131,7 @@ if DEBUG:
 else:
     DATABASES = {
         "default": dj_database_url.config(
-            default=os.getenv("DATABASE_URL")
+            default=env("DATABASE_URL")
         )
     }
 
