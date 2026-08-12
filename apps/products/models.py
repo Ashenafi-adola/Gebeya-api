@@ -10,8 +10,14 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
-
 class Product(models.Model):
+    PRODUCT_STATUS = (
+        ("pending", "Pending"),
+        ("approved", "Approved"),
+        ("rejected", "Rejected"),
+    )
+
+        
     featured = models.CharField(default="NR", max_length=100)
     name = models.CharField(max_length=50)
     price = models.DecimalField(decimal_places=2, max_digits=10)
@@ -20,9 +26,9 @@ class Product(models.Model):
     views = models.ManyToManyField(User, related_name="views")
     description = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    seller = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+    seller = models.ForeignKey(User, on_delete=models.CASCADE)
     posted_date = models.DateTimeField(auto_now_add=True, null=True)
-    status = models.CharField(max_length=50, default="Pending")
+    status = models.CharField(max_length=50,choices=PRODUCT_STATUS ,default="Pending")
 
     class Meta:
         ordering = ["-posted_date"]
