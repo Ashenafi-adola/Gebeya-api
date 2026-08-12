@@ -11,7 +11,7 @@ from datetime import timedelta
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
-            return ValueError("Email field is required")
+            raise ValueError("Email field is required")
 
         email = self.normalize_email(email)
 
