@@ -12,5 +12,4 @@ class CreateReportAPIView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         product = Product.objects.get(id=self.kwargs["pk"])
-        if serializer.is_valid():
-            serializer.save(reporter=self.request.user, product=product)
+        serializer.save(reporter=self.request.user, product=product)

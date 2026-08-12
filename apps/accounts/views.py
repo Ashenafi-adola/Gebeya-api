@@ -38,8 +38,6 @@ class RegisterUserAPIView(generics.CreateAPIView):
         send_email(instance.email, otp_code)
         WishList.objects.create(user=instance)
         Favorities.objects.create(user=instance)
-        self.created_instance = instance
-        return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         serializer = UserSerializer(data=request.data)
