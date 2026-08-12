@@ -1,6 +1,7 @@
+from django.db.models import Count
 from rest_framework.serializers import ModelSerializer
-from .models import Category, Product, ProductAttribute, ProductImage, Favorities
 from rest_framework import serializers
+from .models import Category, Product, ProductAttribute, ProductImage, Favorities
 
 
 class CategorySerializer(ModelSerializer):
@@ -39,8 +40,8 @@ class ProductSerializer(ModelSerializer):
         }
 
     def get_no_views(self, obj):
-        number = obj.views.all().count()
-        return number
+        result = obj.views.aggregate(count=Count("id"))
+        return result["count"]
 
     def get_seller(self, obj):
         user = obj.seller
