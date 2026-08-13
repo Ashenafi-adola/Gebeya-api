@@ -1,12 +1,13 @@
-from rest_framework import generics
 from .models import User, Contact, OTPVerification
 from .serializers import UserSerializer, ContactSerializer
+from .utilis import generate_otp, send_email
+from django.db import transaction
+from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from .utilis import generate_otp, send_email
+from rest_framework.viewsets import ModelViewSet
 from apps.wishlist.models import WishList
 from apps.products.models import Product, Favorities
-from rest_framework.viewsets import ModelViewSet
 
 
 class ManageUserAPIVew(ModelViewSet):
@@ -32,12 +33,13 @@ class RegisterUserAPIView(generics.CreateAPIView):
     permission_classes = [AllowAny]
 
     def perform_create(self, serializer):
-        instance = serializer.save()
-        otp_code = generate_otp()
-        OTPVerification.objects.create(user=instance, otp=otp_code)
-        send_email(instance.email, otp_code)
-        WishList.objects.create(user=instance)
-        Favorities.objects.create(user=instance)
+        with transaction.atomic():
+            instance = serializer.save()
+            otp_code = generate_otp()
+            OTPVerification.objects.create(user=instance, otp=otp_code)
+            WishList.objects.create(user=instance)
+            Favorities.objects.create(user=instance)
+            send_email(instance.email, otp_code)
 
     def create(self, request, *args, **kwargs):
         serializer = UserSerializer(data=request.data)
@@ -60,10 +62,6 @@ class VerifyEmailAPIView(generics.RetrieveUpdateAPIView):
         user = User.objects.get(email=self.kwargs["email"])
         OTP = OTPVerification.objects.get(user=self.get_object())
         if OTP.is_expired():
-            otp_code = generate_otp()
-            OTP.otp = otp_code
-            OTP.save()
-            send_email(request.data["email"], otp_code)
             return Response({"message": "OTP expired", "is_verified": user.is_verified})
         else:
             if request.data["otp"] == OTP.otp:
