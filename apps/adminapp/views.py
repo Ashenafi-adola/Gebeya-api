@@ -4,6 +4,7 @@ from apps.products.models import Product, Category
 from apps.products.serializers import ProductSerializer, CategorySerializer
 from apps.reports.models import Report
 from apps.reports.serializers import ReportSerializer
+from django.db.models import Count
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
@@ -16,26 +17,24 @@ class AdminOverViewAPIView(generics.ListCreateAPIView):
     queryset = User.objects.all()
 
     def get(self, request, *args, **kwargs):
-        users = User.objects.all().count()
-        products = Product.objects.all().count()
+        users = User.objects.aggregate(number=Count("id"))
+        products = Product.objects.aggregate(number=Count("id"))
         pending_product = Product.objects.filter(status="Pending").count()
-        reports = Report.objects.all().count()
+        reports = Report.objects.aggregate(number=Count("id"))
 
         return Response(
             {
-                "users": users,
-                "products": products,
+                "users": users["number"],
+                "products": products["number"],
                 "pending": pending_product,
-                "reports": reports,
+                "reports": reports["number"],
             }
         )
-
 
 class GetRecentReportsAPIView(generics.ListAPIView):
     serializer_class = ReportSerializer
     queryset = Report.get_recent_reports()
     permission_classes = [IsAdminUser]
-
 
 class ReportModerationAPIView(ModelViewSet):
     permission_classes = [IsAdminUser]
