@@ -52,27 +52,23 @@ class RegisterUserAPIView(generics.CreateAPIView):
 class VerifyEmailAPIView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
-    queryset = User
+    queryset = User.objects.all()
     lookup_field = "email"
 
-    def get_object(self):
-        return User.objects.get(email=self.kwargs["email"])
-
     def post(self, request, *args, **kwargs):
-        user = User.objects.get(email=self.kwargs["email"])
         OTP = OTPVerification.objects.get(user=self.get_object())
         if OTP.is_expired():
-            return Response({"message": "OTP expired", "is_verified": user.is_verified})
+            return Response({"message": "OTP expired", "is_verified": self.get_object().is_verified})
         else:
             if request.data["otp"] == OTP.otp:
-                user.is_verified = True
-                user.save()
+                self.get_object().is_verified = True
+                self.get_object().save()
                 return Response(
-                    {"message": "Successfull verifyed", "is_verified": user.is_verified}
+                    {"message": "Successfull verifyed", "is_verified": self.get_object().is_verified}
                 )
             else:
                 return Response(
-                    {"message": "Incorrenct OTP code!", "is_verified": user.is_verified}
+                    {"message": "Incorrenct OTP code!", "is_verified": self.get_object().is_verified}
                 )
 
 
@@ -85,8 +81,7 @@ class GetProductSellerAPIView(generics.RetrieveAPIView):
         return Product.objects.get(id=self.kwargs["pk"])
 
     def get(self, request, *args, **kwargs):
-        user = self.get_object().seller
-        serializer = UserSerializer(user)
+        serializer = UserSerializer(self.get_object().seller)
         return Response(
             serializer.data,
         )
@@ -96,10 +91,7 @@ class GetUserByEmail(generics.RetrieveAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
     queryset = User.objects.all()
-
-    def get_object(self):
-        return User.objects.get(email=self.kwargs["email"])
-
+    lookup_field = "email"
 
 class GetMyContacts(generics.RetrieveAPIView):
     serializer_class = ContactSerializer
