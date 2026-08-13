@@ -62,17 +62,13 @@ class ManageMyProducts(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_category(self, cat):
-        try:
-            return Category.objects.get(name=cat)
-        except Exception:
-            return None
+        return Category.objects.filter(name=cat).first()
 
     def perform_create(self, serializer):
-        instance = serializer.save(
+        serializer.save(
             seller=self.request.user,
             category=self.get_category(self.request.data["category"]),
         )
-        self.created_instance = instance
 
     def create(self, request, *args, **kwargs):
         data = request.data.copy()
@@ -84,6 +80,9 @@ class ManageMyProducts(ModelViewSet):
         return Response(serializer.data)
 
     def get_queryset(self):
+        if fv := self.request.query_params.get("fav"):
+            fav = Favorities.objects.get(user=self.request.user)
+            return fav.product.all()
         return Product.objects.filter(seller=self.request.user)
 
     def update(self, request, *args, **kwargs):
@@ -94,17 +93,6 @@ class ManageMyProducts(ModelViewSet):
             return Response({"response": "Pending"})
 
         return super().update(request, *args, **kwargs)
-
-
-class GetMyFavoriteProductsAPIView(generics.ListAPIView):
-    serializer_class = ProductSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        fav = Favorities.objects.get(user=self.request.user)
-        fav_products = fav.product.all()
-        return fav_products
-
 
 class GetMyTotalAPIView(generics.RetrieveAPIView):
     serializer_class = ProductSerializer
@@ -133,7 +121,6 @@ class ProductDetailAPIView(generics.RetrieveAPIView):
             if self.request.user not in views:
                 self.get_object().views.add(self.request.user)
         return super().retrieve(request, *args, **kwargs)
-
 
 class GetFavorities(generics.RetrieveAPIView):
     queryset = Favorities.objects.all()
