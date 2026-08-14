@@ -64,7 +64,7 @@ class OTPVerification(models.Model):
     created_at = models.DateTimeField(auto_now=True)
     attempt = models.IntegerField(default=0)
     is_active = models.BooleanField(default=True)
-    blocked_until = models.DateTimeField()
+    blocked_until = models.DateTimeField(auto_now=True)
     is_used = models.BooleanField(default=False)
 
     def set_opt(self, raw_otp):

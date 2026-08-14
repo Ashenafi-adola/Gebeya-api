@@ -75,6 +75,26 @@ class VerifyEmailAPIView(generics.RetrieveUpdateAPIView):
                     {"message": "Incorrect", "is_verified": self.get_object().is_verified}
                 )
 
+class ResendOTPAPIView(generics.RetrieveUpdateAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
+    queryset = User.objects.all()
+    lookup_field = "email"
+
+    def post(self, request, *args, **kwargs):
+        OTP = OTPVerification.objects.get(user=self.get_object())
+        if OTP.is_active:
+            new_otp = generate_otp()
+            OTP.set_opt(new_otp)
+            send_email(self.kwargs["email"], new_otp)
+            return Response({
+                "message": "new otp is being send check out you email"
+            })
+        else:
+            return Response({
+                "message": "you have too many trials try again later"
+            })
+
 
 class GetProductSellerAPIView(generics.RetrieveAPIView):
     serializer_class = UserSerializer
