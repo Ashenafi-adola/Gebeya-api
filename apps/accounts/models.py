@@ -5,6 +5,7 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 from django.utils import timezone
+from django.contrib.auth.hashers import make_password, check_password
 from datetime import timedelta
 
 
@@ -59,8 +60,42 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class OTPVerification(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    otp = models.CharField(max_length=6)
+    otp = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now=True)
+    attempt = models.IntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+    blocked_until = models.DateTimeField()
+    is_used = models.BooleanField(default=False)
+
+    def set_opt(self, raw_otp):
+        self.otp = make_password(str(raw_otp))
+        self.save()
+
+    def verify_otp(self, raw_otp):
+        if self.is_active:
+            if self.is_expired():
+                return False
+            
+            if self.attempt >= 3:
+                self.is_active = False
+                self.blocked_until = timezone.now() + timedelta(minutes=30)
+                self.save(update_fields=["is_active", "blocked_until"])
+                return False
+            
+            self.attempt += 1
+            self.save(update_fields=["attempt"])
+
+            if check_password(str(raw_otp), self.otp):
+                self.is_used = True
+                self.save(update_fields=["is_used"])
+                return True
+            return False
+        else:
+            if self.blocked_until < timezone.now():
+                self.is_active = True
+                self.save(update_fields=["is_active"])
+                self.verify_otp(raw_otp)
+            return False
 
     def is_expired(self):
         return (self.created_at + timedelta(minutes=15)) < timezone.now()
