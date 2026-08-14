@@ -36,8 +36,8 @@ class RegisterUserAPIView(generics.CreateAPIView):
         with transaction.atomic():
             instance = serializer.save()
             otp_code = generate_otp()
-            OTPVerification.objects.create(user=instance, otp=otp_code)
-            WishList.objects.create(user=instance)
+            otp = OTPVerification(user=instance)
+            otp.set_opt(otp_code)
             Favorities.objects.create(user=instance)
             send_email(instance.email, otp_code)
 
@@ -57,18 +57,22 @@ class VerifyEmailAPIView(generics.RetrieveUpdateAPIView):
 
     def post(self, request, *args, **kwargs):
         OTP = OTPVerification.objects.get(user=self.get_object())
-        if OTP.is_expired():
-            return Response({"message": "OTP expired", "is_verified": self.get_object().is_verified})
+        if OTP.verify_otp(request.data["otp"]):
+            return Response(
+                {"message": "Successfull verifyed", "is_verified": self.get_object().is_verified}
+            )
         else:
-            if request.data["otp"] == OTP.otp:
-                self.get_object().is_verified = True
-                self.get_object().save()
+            if not OTP.is_active:
                 return Response(
-                    {"message": "Successfull verifyed", "is_verified": self.get_object().is_verified}
+                    {"message": "Too many trials", "is_verified": self.get_object().is_verified}
+                )
+            elif OTP.is_expired():
+                return Response(
+                    {"message": "Your OTP is expired click resend for new OTP", "is_verified": self.get_object().is_verified}
                 )
             else:
                 return Response(
-                    {"message": "Incorrenct OTP code!", "is_verified": self.get_object().is_verified}
+                    {"message": "Incorrect", "is_verified": self.get_object().is_verified}
                 )
 
 
