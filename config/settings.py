@@ -117,7 +117,6 @@ ASGI_APPLICATION = "config.asgi.application"
 
 
 if DEBUG:
-    CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
@@ -128,12 +127,6 @@ if DEBUG:
             "PORT": os.getenv("DB_PORT"),
         }
     }
-    CACHES = {
-        "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": env("REDIS_URL"),
-        }
-    }
 else:
     DATABASES = {
         "default": dj_database_url.parse(
@@ -142,14 +135,22 @@ else:
             ssl_require=not DEBUG,
         )
     }
-    CHANNEL_LAYERS = {
-        "default": {
-            "BACKEND": "channels_redis.core.RedisChannelLayer",
-            "CONFIG": {
-                "hosts": env("REDIS_URL"),
-            },
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": env("REDIS_URL"),
         },
+    },
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": env("REDIS_URL"),
     }
+}
 
 
 # Password validation
