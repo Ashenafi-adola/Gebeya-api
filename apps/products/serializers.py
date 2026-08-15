@@ -1,7 +1,7 @@
 from django.db.models import Count
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
-from .models import Category, Product, ProductAttribute, ProductImage, Favorities
+from .models import Category, Product, ProductImage, Favorities
 
 
 class CategorySerializer(ModelSerializer):
@@ -57,13 +57,6 @@ class ProductImageSerializer(ModelSerializer):
     def create(self, validated_data):
         image = ProductImage.objects.create(**validated_data)
         return image
-
-
-class ProductAttributeSerializer(ModelSerializer):
-    class Meta:
-        model = ProductAttribute
-        fields = ["attribute", "value", "product"]
-
 
 class FavoritiesSerializer(ModelSerializer):
     class Meta:

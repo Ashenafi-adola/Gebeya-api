@@ -14,6 +14,5 @@ urlpatterns = [
         "pro-detail/<int:pk>/", views.ProductDetailAPIView.as_view(), name="pro-detail"
     ),
     path("pro-fav/<int:pk>/", views.GetFavorities.as_view()),
-    path("my-fav-products/", views.GetMyFavoriteProductsAPIView.as_view()),
     path("get-total-views/", views.GetMyTotalAPIView.as_view()),
 ]

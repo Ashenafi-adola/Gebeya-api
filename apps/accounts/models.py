@@ -75,16 +75,13 @@ class OTPVerification(models.Model):
         if self.is_active:
             if self.is_expired():
                 return False
-            
             if self.attempt >= 3:
                 self.is_active = False
                 self.blocked_until = timezone.now() + timedelta(minutes=30)
                 self.save(update_fields=["is_active", "blocked_until"])
                 return False
-            
             self.attempt += 1
             self.save(update_fields=["attempt"])
-
             if check_password(str(raw_otp), self.otp):
                 self.is_used = True
                 self.save(update_fields=["is_used"])
@@ -92,8 +89,9 @@ class OTPVerification(models.Model):
             return False
         else:
             if self.blocked_until < timezone.now():
+                self.attempt = 0
                 self.is_active = True
-                self.save(update_fields=["is_active"])
+                self.save(update_fields=["is_active", "attempt"])
                 self.verify_otp(raw_otp)
             return False
 

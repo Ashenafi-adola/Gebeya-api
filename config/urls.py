@@ -17,7 +17,7 @@ class PublicTokenRefreshView(TokenRefreshView):
 urlpatterns = [
     path("admin/main/", admin.site.urls),
     path("admin/", include("apps.adminapp.urls")),
-    path("accounts/", include("apps.accounts.urls")),
+    path("api/accounts/", include("apps.accounts.urls")),
     path("products/", include("apps.products.urls")),
     path("reports/", include("apps.reports.urls")),
     path("chat/", include("apps.chat.urls")),
