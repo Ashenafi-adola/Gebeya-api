@@ -58,6 +58,7 @@ EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
 
 INSTALLED_APPS = [
     "daphne",
+    "channels",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -136,14 +137,30 @@ else:
         )
     }
 
+REDIS_URL = env("REDIS_URL")
+
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [env("REDIS_URL")],
+            "hosts": [REDIS_URL],
         },
     },
 }
+
+# If using rediss:// (SSL/TLS), configure ssl context parameters
+if REDIS_URL.startswith("rediss://"):
+    import ssl
+    ssl_context = ssl.create_default_context()
+    ssl_context.check_hostname = False
+    ssl_context.verify_mode = ssl.CERT_NONE
+
+    CHANNEL_LAYERS["default"]["CONFIG"]["hosts"] = [
+        {
+            "address": REDIS_URL,
+            "ssl": ssl_context,
+        }
+    ]
 
 CACHES = {
     "default": {
